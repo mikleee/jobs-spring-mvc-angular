@@ -17,9 +17,6 @@ import java.util.List;
 public class DepartmentsController extends GenericController {
 
 
-    /**
-     * Shows list of departments
-     */
     @RequestMapping(value = "/depList", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Department> showDepartmentList() throws DataSourceException {
@@ -27,9 +24,6 @@ public class DepartmentsController extends GenericController {
     }
 
 
-    /**
-     * Deletes department and redirects request to show departments list
-     */
     @RequestMapping(value = "/depDelete", method = RequestMethod.POST)
     @ResponseBody
     public Integer deleteDepartment(@RequestParam(required = false) Integer depId) throws DataSourceException, EvilUserDetectedException {
@@ -38,10 +32,6 @@ public class DepartmentsController extends GenericController {
     }
 
 
-    /**
-     * Shows "department for edit" form, where text fields are filled by corresponding fields of department for
-     * add or edit
-     */
     @RequestMapping(value = "/depAddOrUpdate", method = RequestMethod.GET)
     public ModelAndView showAddDepartmentForm(@RequestParam(required = false) Integer depId, ModelMap map) throws EvilUserDetectedException, DataSourceException {
         if (map.containsKey("incorrectDepartment")) {
@@ -55,9 +45,6 @@ public class DepartmentsController extends GenericController {
     }
 
 
-    /**
-     * Executes department adding or updating and redirects request to show departments list
-     */
     @RequestMapping(value = "/doDepAddOrUpdate", method = RequestMethod.POST)
     @ResponseBody
     public Department addOrUpdateDepartment(@ModelAttribute Department department) throws DataSourceException, EvilUserDetectedException, ValidationException {
@@ -70,10 +57,6 @@ public class DepartmentsController extends GenericController {
     }
 
 
-    /**
-     * Shows "department for edit" form, where text fields are filled by corresponding fields of department with
-     * not valid data
-     */
     @ExceptionHandler(ValidationException.class)
     public ModelAndView validationExceptionHandler(ValidationException e) throws DataSourceException, EvilUserDetectedException {
         ModelMap map = new ModelMap();

@@ -8,11 +8,9 @@ import com.aimprosoft.jobs.util.SpringUtils;
 import net.sf.oval.constraint.Length;
 import net.sf.oval.constraint.NotNull;
 import net.sf.oval.constraint.ValidateWithMethod;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,12 +90,9 @@ public class Department implements PersistEntity {
     //--------------------------------variable for mapping--------------------------------------------------------------
 
     @OneToMany(targetEntity = Employee.class, mappedBy = "department", cascade = CascadeType.ALL)
-
     private List<Employee> employeeList = new ArrayList<>();
 
     @SuppressWarnings("UnusedDeclaration")
-    //@JsonManagedReference
-    @JsonIgnore
     public List<Employee> getEmployeeList() {
         return employeeList;
     }

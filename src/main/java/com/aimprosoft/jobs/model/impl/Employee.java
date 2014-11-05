@@ -13,7 +13,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @javax.persistence.Entity
@@ -47,7 +46,7 @@ public class Employee implements PersistEntity {
     @NotNull(message = "*date is incorrect")
     private Date birth;
 
-    @JsonIgnore
+    @Transient
     private Integer departmentId;
 
 
@@ -110,7 +109,7 @@ public class Employee implements PersistEntity {
     }
 
     public Integer getDepartmentId() {
-        return departmentId;
+        return department.getId();
     }
 
     public void setDepartmentId(Integer departmentId) {
@@ -126,10 +125,9 @@ public class Employee implements PersistEntity {
 
     //--------------------------------variable for mapping--------------------------------------------------------------
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department")
     @JsonIgnore
-    // @JsonBackReference
     private Department department;
 
     public Department getDepartment() {

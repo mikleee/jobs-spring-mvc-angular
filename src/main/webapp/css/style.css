@@ -2,8 +2,9 @@
     border-radius: 5px;
 }
 
-.block-70 {
-    width: 70%;
+.rounded-top {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .text-section-blue {
@@ -17,6 +18,16 @@
     color: aliceblue;
 }
 
+.text-section-default {
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-right: 7px;
+    padding-left: 7px;
+    color: rgba(0, 0, 0, 0.81);
+}
+
 .section-grey {
     margin-left: auto;
     margin-right: auto;
@@ -25,4 +36,24 @@
     padding-bottom: 3px;
     padding-right: 7px;
     padding-left: 7px;
+    border: 1px solid #EBEBEB;
+}
+
+.scrollable-y {
+    overflow-y: scroll;
+}
+
+.underline-light-gray {
+    border-bottom: 1px solid lightgray;
+}
+
+.header {
+    background-color: aliceblue;
+}
+
+.bordered-container {
+    border-radius: 5px;
+    border: darkgray 1px dotted;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
