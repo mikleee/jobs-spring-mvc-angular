@@ -4,7 +4,9 @@ import com.aimprosoft.jobs.controller.EvilUserDetectedException;
 import com.aimprosoft.jobs.controller.GenericController;
 import com.aimprosoft.jobs.dao.DataSourceException;
 import com.aimprosoft.jobs.model.impl.Department;
+import com.aimprosoft.jobs.model.impl.Employee;
 import com.aimprosoft.jobs.service.ValidationException;
+import com.aimprosoft.jobs.util.RandomObjectCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,27 @@ import java.util.List;
 @Controller
 public class DepartmentsController extends GenericController {
 
+    @RequestMapping(value = "/populate", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public List<Department> populate() throws DataSourceException, ValidationException {
+
+        for (int i = 0; i < 5; i++) {
+            departmentService.add(RandomObjectCreator.createRandomObject(new Department(), null));
+        }
+
+        List<Department> departments = departmentService.getAll();
+
+//        for (int i = 0; i < 5; i++) {
+//            Integer depId = departments.get(RandomObjectCreator.randomNumber(departments.size())).getId();
+//
+//            Employee employee = RandomObjectCreator.createRandomObject(new Employee(), null);
+//            employee.setDepartment(new Department(depId));
+//
+//            employeeService.add(employee);
+//        }
+
+        return null;
+    }
 
     @RequestMapping(value = "/depList", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
@@ -43,7 +66,6 @@ public class DepartmentsController extends GenericController {
         return new ModelAndView("AddOrUpdateDepartment", map);
 
     }
-
 
     @RequestMapping(value = "/doDepAddOrUpdate", method = RequestMethod.POST)
     @ResponseBody

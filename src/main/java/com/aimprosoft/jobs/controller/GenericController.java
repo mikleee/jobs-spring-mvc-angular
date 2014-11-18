@@ -2,12 +2,22 @@ package com.aimprosoft.jobs.controller;
 
 import com.aimprosoft.jobs.ApplicationException;
 import com.aimprosoft.jobs.dao.DataSourceException;
+import com.aimprosoft.jobs.model.impl.Department;
+import com.aimprosoft.jobs.model.impl.Employee;
 import com.aimprosoft.jobs.service.DepartmentService;
 import com.aimprosoft.jobs.service.EmployeeService;
+import com.aimprosoft.jobs.service.ValidationException;
+import com.aimprosoft.jobs.util.RandomObjectCreator;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.aimprosoft.jobs.util.ControllerParamUtils.doExceptionScenario;
 
@@ -31,7 +41,6 @@ public abstract class GenericController {
 
     @Autowired
     protected DepartmentService departmentService;
-
 
     /**
      * Redirects request to error page which contains exception message

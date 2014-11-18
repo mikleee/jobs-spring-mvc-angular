@@ -31,63 +31,28 @@
 <body>
 
 
-<div class="rounded col-70 row-60 text-section-default scrollable-y separated-y" ng-controller="DepartmentListController as depListCtrl">
+<div class="rounded col-70 text-section-default separated-y" ng-controller="MainController as mainCtrl">
 
     <div class="container">
 
 
-        <ul class="nav nav-pills" role="tablist">
-            <li role="presentation" class="active"><a href="#">Departments</a></li>
-            <li role="presentation"><a href="#">Add new department</a></li>
-        </ul>
-
         <div class="row separated-y">
+            <tabs-panel></tabs-panel>
+        </div>
 
-            <%--<table class="rounded text-section-light-blue col-95 separated-y">--%>
-            <table class="table">
+        <div class="row separated-y" ng-show="mainCtrl.isDepForm()">
+            <department-form></department-form>
+        </div>
 
-                <tr ng-hide="depListCtrl.isEmpty()" class="header">
-                    <th class="col-1-4">ID</th>
-                    <th class="col-1-4">NAME</th>
-                    <th class="col-1-4">LOCATION</th>
-                    <th class="col-1-4"></th>
-                </tr>
 
-                <tr ng-repeat="dep in depListCtrl.depList" class="underline-light-gray">
-                    <td class="col-1-4">{{dep.id}}</td>
-                    <td class="col-1-4">{{dep.name}}</td>
-                    <td class="col-1-4">{{dep.location}}</td>
-                    <td class="col-1-4">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                Action
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">Employees</a></li>
-                                <li><a href="#">Edit</a></li>
-                                <li><a href="#">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-
-            </table>
-
+        <div class="row separated-y row-60 scrollable-y" ng-show="mainCtrl.isDepList()">
+            <department-list></department-list>
         </div>
 
     </div>
 
 </div>
 
-
-<%--<div class="rounded col-95 section-grey" ng-controller="DepartmentListController as depListCtrl">--%>
-
-<%--<label for="header" class="rounded text-section-blue">temp model contains {{depListCtrl.depList.length}} items</label>--%>
-
-<%--<p id="header" class="rounded text-section-light-blue" ng-model="depListCtrl.depList">{{depListCtrl.depList}}</p>--%>
-
-<%--</div>--%>
 
 </body>
 

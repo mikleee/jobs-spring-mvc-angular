@@ -57,3 +57,11 @@
     margin-top: 2px;
     margin-bottom: 2px;
 }
+
+/*.ng-scope {*/
+    /*border: 1px dotted blue;*/
+/*}*/
+
+td, th {
+    text-align: center;
+}
