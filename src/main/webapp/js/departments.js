@@ -3,6 +3,15 @@
     var departmentList = [];
     var activeTab = 1;
 
+    var Util = {
+
+        logAjax: function (data, result) {
+            console.log('Data: ' + data);
+            console.log('Result: ' + result);
+        }
+
+    };
+
     var requests = {
 
         depListRequest: function () {
@@ -47,60 +56,29 @@
     var departments = angular.module('departments', []);
 
 
-//    departments.factory('rootRepo', ['$scope', '$http', function ($scope, $http) {
-//
-//        $http(requests.depListRequest)
-//            .success(function (data) {
-//                $scope.depList = data;
-//            }).error(function (data) {
-//                $scope.depList = 'some boy made mistake';
-//            });
-//
-//        $scope.getDepList = function () {
-//            return $scope.depList;
-//        };
-//
-//        $scope.setDepList = function (deplist) {
-//            $scope.depList = deplist;
-//        }
-//
-//    }]);
+    departments.service('depService', ['$http',
+        function ($http) {
+            var depList = [];
 
-    departments.service('callService', function () {
+            return {
 
-        this.depListRequest = function () {
-            return {method: 'get', url: '/depList'}
-        };
+                getDepList: function () {
+                    this.refreshDepList();
+                    return depList;
+                },
 
-        this.refreshDepList = function (httpService) {
-            var result;
+                refreshDepList: function () {
+                    $http({method: 'get', url: '/depList'})
+                        .success(function (data) {
+                            depList = data;
+                        }).error(function (data) {
+                            alert('some boy made mistake, data: ' + data);
+                        });
+                }
 
-            httpService({method: 'get', url: '/depList'})
-                .success(function (data) {
-                    result = data;
-                })
-                .error(function (data) {
-                    result = 'some boy';
-                });
-
-            return result;
-        };
-
-        this.populate = function (httpService, result) {
-
-            httpService({method: 'POST', url: '/populate'})
-                .success(function (data) {
-                    result = data;
-                    alert('good');
-                })
-                .error(function (data) {
-                    result = data;
-                    alert('some boy');
-                });
-
+            };
         }
-
-    });
+    ]);
 
 
     departments.controller('MainController', function () {
@@ -129,52 +107,52 @@
     }]);
 
 
-    departments.controller('departmentListController', ['$scope', '$http', 'callService', function ($scope, $http, callService) {
-        var $this = this;
+    departments.controller('departmentListController', ['$scope', '$http', 'depService',
+        function ($scope, $http, depService) {
 
-//        this.depList = function () {
-//            return rootRepo.getDepList();
-//        };
-        this.depList = [];
+            $scope.depList = depService.getDepList();
 
-        this.add = function () {
-            alert(this.depList.length);
-            this.depList.push({});
-            alert(this.depList.length);
-        };
+//            $http({method: 'get', url: '/depList'})
+//                .success(function (data) {
+//                    $scope.depList = data;
+//                }).error(function (data) {
+//                    alert('some boy made mistake, data: ' + data);
+//                });
 
-        this.isEmpty = function () {
-            return $this.depList.length == 0;
-        };
+            this.add = function () {
+                alert(this.depList.length);
+                $scope.depList.push({});
+                alert(this.depList.length);
+            };
 
-
-
-        $http(requests.depListRequest)
-            .success(function (data) {
-                $this.depList = data;
-            }).error(function (data) {
-                $this.depList = 'some boy made mistake';
-            });
-
-    }]);
+            $scope.isEmpty = function () {
+                alert('is empty: ' + $scope.depList.length);
+                return $scope.depList.length == 0;
+            };
 
 
-    departments.controller('DepartmentFormController', ['$scope', '$http', 'departmentListController', function ($scope, $http, departmentListController) {
-        this.currentDep = {name: '', location: ''};
-
-        var $this = this;
+        }
+    ]);
 
 
-        this.isEmpty = function () {
-            return this.depList.length == 0;
-        };
+    departments.controller('DepartmentFormController', ['$scope', '$http',
+        function ($scope, $http) {
+            this.currentDep = {name: '', location: ''};
 
-        this.populate = function () {
-            requests.populate($http, $scope.depList);
-        };
+            var $this = this;
 
 
-    }]);
+            this.isEmpty = function () {
+                return this.depList.length == 0;
+            };
+
+            this.populate = function () {
+                requests.populate($http, $scope.depList);
+            };
+
+
+        }
+    ]);
 
 
     /****************************directives************************************/

@@ -1,7 +1,7 @@
-<table class="table" ng-controller="departmentListController as depListCtrl">
+<table class="table" ng-controller="departmentListController">
 
     <thead>
-    <tr ng-hide="depListCtrl.isEmpty()" class="header">
+    <tr ng-hide="isEmpty()" class="header">
         <td class="col-10">ID</td>
         <td class="col-30">NAME</td>
         <td class="col-30">LOCATION</td>
@@ -11,7 +11,7 @@
     </thead>
 
     <tbody>
-    <tr ng-repeat="dep in depListCtrl.depList" class="underline-light-gray">
+    <tr ng-repeat="dep in depList" class="underline-light-gray">
         <td class="col-10">{{dep.id}}</td>
         <td class="col-30">{{dep.name}}</td>
         <td class="col-30">{{dep.location}}</td>
