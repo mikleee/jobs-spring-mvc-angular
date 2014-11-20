@@ -41,11 +41,11 @@
             httpService({method: 'POST', url: '/populate'})
                 .success(function (data) {
                     result = data;
-                    alert('good');
+                    console.log('good');
                 })
                 .error(function (data) {
                     result = data;
-                    alert('some boy');
+                    console.log('some boy');
                 });
 
         }
@@ -56,27 +56,31 @@
     var departments = angular.module('departments', []);
 
 
-    departments.service('depService', ['$http',
-        function ($http) {
+    departments.service('depService', ['$http', '$q',
+        function ($http, $q) {
             var depList = [];
 
             return {
 
                 getDepList: function () {
-                    this.refreshDepList();
                     return depList;
                 },
 
                 refreshDepList: function () {
+                    var deferred = $q.defer();
+
                     $http({method: 'get', url: '/depList'})
                         .success(function (data) {
-                            depList = data;
+                            deferred.resolve(data);
                         }).error(function (data) {
-                            alert('some boy made mistake, data: ' + data);
+                            console.log('some boy made mistake, data: ' + data);
                         });
+
+                    return deferred.promise;
                 }
 
             };
+
         }
     ]);
 
@@ -107,26 +111,22 @@
     }]);
 
 
-    departments.controller('departmentListController', ['$scope', '$http', 'depService',
-        function ($scope, $http, depService) {
+    departments.controller('departmentListController', ['$scope', 'depService',
+        function ($scope, depService) {
 
-            $scope.depList = depService.getDepList();
-
-//            $http({method: 'get', url: '/depList'})
-//                .success(function (data) {
-//                    $scope.depList = data;
-//                }).error(function (data) {
-//                    alert('some boy made mistake, data: ' + data);
-//                });
+            var depListPromise = depService.refreshDepList();
+            depListPromise.then(function (data) {
+                $scope.depList = data;
+            });
 
             this.add = function () {
-                alert(this.depList.length);
+                console.log(this.depList.length);
                 $scope.depList.push({});
-                alert(this.depList.length);
+                console.log(this.depList.length);
             };
 
             $scope.isEmpty = function () {
-                alert('is empty: ' + $scope.depList.length);
+                console.log('is empty: ' + $scope.depList.length);
                 return $scope.depList.length == 0;
             };
 
