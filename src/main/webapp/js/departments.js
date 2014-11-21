@@ -1,16 +1,18 @@
 (function () {
 
+
+    function log(message) {
+        console.log(message);
+    }
+
+    function logData(message, data) {
+        log(message + ':');
+        log(data);
+    }
+
     var departmentList = [];
     var activeTab = 1;
 
-    var Util = {
-
-        logAjax: function (data, result) {
-            console.log('Data: ' + data);
-            console.log('Result: ' + result);
-        }
-
-    };
 
     var requests = {
 
@@ -56,27 +58,39 @@
     var departments = angular.module('departments', []);
 
 
-    departments.service('depService', ['$http', '$q',
+    departments.service('depService', [ '$http', '$q',
         function ($http, $q) {
-            var depList = [];
+            var depList;
+
+            var callForDepList = function () {
+                var result = $http.get('/depList');
+                log('depService.callForDepList executed');
+                return $http.get('/depList');
+            };
+
 
             return {
 
                 getDepList: function () {
-                    return depList;
+                    var promise = callForDepList();
+
+                    promise.then(function (data) {
+                        this.setDepList(data);
+                        logData('depList promise in the depService.getDepList() have been populated', data);
+                    });
+
+                    var result = depList ? depList : [];
+                    logData('depService.getDepList() executed', depList);
+                    return result;
+                },
+
+                setDepList: function (data) {
+                    depList = data;
+                    logData('depService.setDepList executed', data);
                 },
 
                 refreshDepList: function () {
-                    var deferred = $q.defer();
-
-                    $http({method: 'get', url: '/depList'})
-                        .success(function (data) {
-                            deferred.resolve(data);
-                        }).error(function (data) {
-                            console.log('some boy made mistake, data: ' + data);
-                        });
-
-                    return deferred.promise;
+                    return $http.get('/depList');
                 }
 
             };
@@ -114,22 +128,40 @@
     departments.controller('departmentListController', ['$scope', 'depService',
         function ($scope, depService) {
 
-            var depListPromise = depService.refreshDepList();
-            depListPromise.then(function (data) {
-                $scope.depList = data;
-            });
+            $scope.depList = [];
 
-            this.add = function () {
-                console.log(this.depList.length);
-                $scope.depList.push({});
-                console.log(this.depList.length);
+//            var depListPromise = depService.refreshDepList();
+//            log('after calling refreshDepList in the departmentListController');
+//
+//            depListPromise.then(function (data) {
+//                $scope.depList = data;
+////                depService.setDepList(data);
+//                logData('depList promise in the departmentListController have been populated', data);
+//            });
+
+            $scope.getDepList = function () {
+                var promise = depService.refreshDepList();
+                promise.then(function (data) {
+                    $scope.depList = data;
+                });
+            };
+
+            $scope.getDepList();
+
+//            $scope.depList = depService.getDepList();
+//            logData('$scope.depList' + $scope.depList);
+
+
+            $scope.add = function () {
+                console.log('controller.add() before: ' + $scope.depList.length);
+                $scope.depList.push({id: -10, name: 'jopa', location: 'joppa'});
+                console.log('controller.add() after: ' + $scope.depList.length);
             };
 
             $scope.isEmpty = function () {
                 console.log('is empty: ' + $scope.depList.length);
                 return $scope.depList.length == 0;
             };
-
 
         }
     ]);

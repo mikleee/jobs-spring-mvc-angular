@@ -6,7 +6,7 @@
         <td class="col-30">NAME</td>
         <td class="col-30">LOCATION</td>
         <td class="col-10"></td>
-        <td><button ng-click="depListCtrl.add()">ergkop</button></td>
+        <td><button ng-click="add()">ergkop</button></td>
     </tr>
     </thead>
 
