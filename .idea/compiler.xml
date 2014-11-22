@@ -23,10 +23,12 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="jobs-spring-mvc" />
+        <module name="jobs-spring-mvc-angular" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="jobs-spring-mvc" target="1.7" />
+      <module name="jobs-spring-mvc-angular" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,5 +1,7 @@
 package com.aimprosoft.jobs.util;
 
+import org.apache.log4j.Logger;
+
 import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +13,7 @@ import java.util.Date;
  */
 public class RandomObjectCreator {
 
+    private static final Logger LOGGER = Logger.getLogger(RandomObjectCreator.class);
 
     public static <T> T createRandomObject(T t, Integer id) {
 
@@ -44,17 +47,13 @@ public class RandomObjectCreator {
         try {
             instance = field.getType().newInstance();
         } catch (Exception e) {
-            System.out.print("cant create instance for field type: " + field.getType() + " for field: " + field.getName() + ". Try plan B: ");
             try {
                 instance = field.getType().getConstructor(int.class).newInstance(randomNumber());
-                System.out.println(" SUCCESS");
             } catch (Exception e1) {
                 try {
-                    System.out.print(" FAIL. Try plan C: ");
                     instance = field.getType().getConstructor(long.class).newInstance(randomNumber());
-                    System.out.println(" SUCCESS");
                 } catch (Exception e2) {
-                    System.out.println(" FAIL (value is set as null)");
+                    LOGGER.debug(field.getName() + " field in the " + o + " was not set.");
                 }
             }
         }

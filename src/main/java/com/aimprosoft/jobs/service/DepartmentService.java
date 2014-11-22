@@ -17,5 +17,6 @@ public abstract class DepartmentService extends EntityService<Department> {
     protected static final String UPDATE_DEP_ERROR = "DATA SOURCE ERROR (update department failed)";
 
     public abstract List<Department> getAll() throws DataSourceException;
+    public abstract void deleteAll() throws DataSourceException;
 
 }

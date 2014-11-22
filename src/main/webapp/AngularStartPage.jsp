@@ -20,7 +20,8 @@
     <script type="text/javascript" src="<c:url value ="${bootstrapJSPath}"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/departments.js"/>"></script>
 
-    <link href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all">
+    <link href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"
+          media="all">
     <link href="css/style.css" rel="stylesheet" type="text/css" media="all">
     <link href="css/blocks.css" rel="stylesheet" type="text/css" media="all">
     <link href="${bootstrapCSSPath}" rel="stylesheet" type="text/css" media="all">
@@ -31,10 +32,13 @@
 <body>
 
 
+<notification-bar class="notification-bar"></notification-bar>
+
+
 <div class="rounded col-70 text-section-default separated-y" ng-controller="MainController as mainCtrl">
 
-    <div class="container">
 
+    <div class="container">
 
         <div class="row separated-y">
             <tabs-panel></tabs-panel>
@@ -45,7 +49,7 @@
         </div>
 
 
-        <div class="row separated-y row-60 scrollable-y" ng-show="mainCtrl.isDepList()">
+        <div class="row separated-y row-60 scrollable-y " ng-show="mainCtrl.isDepList()">
             <department-list></department-list>
         </div>
 

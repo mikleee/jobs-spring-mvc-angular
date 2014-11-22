@@ -10,91 +10,79 @@
         log(data);
     }
 
-    var departmentList = [];
     var activeTab = 1;
-
-
-    var requests = {
-
-        depListRequest: function () {
-            return {method: 'get', url: '/depList'}
-        },
-
-        refreshDepList: function (httpService) {
-
-            var result;
-
-            httpService({method: 'get', url: '/depList'})
-
-                .success(function (data) {
-                    result = data;
-                })
-
-                .error(function (data) {
-                    result = 'some boy';
-                });
-
-            return result;
-        },
-
-
-        populate: function (httpService, result) {
-
-            httpService({method: 'POST', url: '/populate'})
-                .success(function (data) {
-                    result = data;
-                    console.log('good');
-                })
-                .error(function (data) {
-                    result = data;
-                    console.log('some boy');
-                });
-
-        }
-
-    };
 
 
     var departments = angular.module('departments', []);
 
+    departments.service('notificationService', [ '$rootScope',
+        function ($rootScope) {
 
-    departments.service('depService', [ '$http', '$q',
-        function ($http, $q) {
-            var depList;
+            return {
+                updateNotification: function (notification) {
+                    $rootScope.lastNotification = notification;
+                }
+            }
 
-            var callForDepList = function () {
-                var result = $http.get('/depList');
-                log('depService.callForDepList executed');
-                return $http.get('/depList');
+        }
+    ]);
+
+    departments.service('depService', [ '$http', '$q', '$rootScope',
+        function ($http, $q, $rootScope) {
+
+            var handleCallback = function (response, notificationMessage, logMessage) {
+                $rootScope.depList = response.data;
+                $rootScope.lastNotification = notificationMessage;
+                logData('logMessage', response);
             };
-
 
             return {
 
                 getDepList: function () {
-                    var promise = callForDepList();
-
-                    promise.then(function (data) {
-                        this.setDepList(data);
-                        logData('depList promise in the depService.getDepList() have been populated', data);
-                    });
-
-                    var result = depList ? depList : [];
-                    logData('depService.getDepList() executed', depList);
+                    var result = $rootScope.depList ? $rootScope.depList : [];
+                    logData('depService.getDepList() executed', result);
                     return result;
                 },
 
-                setDepList: function (data) {
-                    depList = data;
-                    logData('depService.setDepList executed', data);
+                setDepList: function (response) {
+                    $rootScope.depList = response.data;
                 },
 
                 refreshDepList: function () {
-                    return $http.get('/depList');
+                    $http.get('/depList').then(
+                        function (response) {
+                            handleCallback(response, 'Department list was updated', 'depService.refreshDepList.then executed');
+                        }
+                    );
+
+                },
+
+                populateWithTestData: function (result) {
+                    $http.post('/populate').then(
+                        function (response) {
+                            handleCallback(response, 'Department list was populated with test data', 'depService.populateWithTestData.then executed');
+                        }
+                    );
+                },
+
+                deleteAll: function (result) {
+                    $http.post('/deleteAllDepartments').then(
+                        function (response) {
+                            $rootScope.depList = [];
+                            $rootScope.lastNotification = 'All departments were deleted';
+                        }
+                    );
+                },
+
+                addOne: function (department) {
+                    $http.post('/doDepAddOrUpdate', department).then(
+                        function (response) {
+                            handleCallback(response, department.name + ' department was added.', 'depService.addOne.then executed');
+                        }
+                    );
                 }
 
-            };
-
+            }
         }
     ]);
 
@@ -125,63 +113,54 @@
     }]);
 
 
-    departments.controller('departmentListController', ['$scope', 'depService',
-        function ($scope, depService) {
+    departments.controller('departmentListController', ['$scope', 'depService', '$rootScope',
+        function ($scope, depService, $rootScope) {
 
-            $scope.depList = [];
+            depService.refreshDepList();
 
-//            var depListPromise = depService.refreshDepList();
-//            log('after calling refreshDepList in the departmentListController');
-//
-//            depListPromise.then(function (data) {
-//                $scope.depList = data;
-////                depService.setDepList(data);
-//                logData('depList promise in the departmentListController have been populated', data);
-//            });
-
-            $scope.getDepList = function () {
-                var promise = depService.refreshDepList();
-                promise.then(function (data) {
-                    $scope.depList = data;
-                });
-            };
-
-            $scope.getDepList();
-
-//            $scope.depList = depService.getDepList();
-//            logData('$scope.depList' + $scope.depList);
-
+            $scope.showDepListInJson = false;
 
             $scope.add = function () {
-                console.log('controller.add() before: ' + $scope.depList.length);
-                $scope.depList.push({id: -10, name: 'jopa', location: 'joppa'});
-                console.log('controller.add() after: ' + $scope.depList.length);
+                $scope.depList().push({id: -10, name: 'jopa', location: 'joppa'});
+                $rootScope.lastNotification = 'Fake department added';
             };
 
             $scope.isEmpty = function () {
-                console.log('is empty: ' + $scope.depList.length);
-                return $scope.depList.length == 0;
+                logData('departmentListController.isEmpty', $scope.depList());
+                return $scope.depList().length == 0;
+            };
+
+            $scope.depList = depService.getDepList;
+
+            $scope.deleteAll = depService.deleteAll;
+
+        }
+    ]);
+
+
+    departments.controller('DepartmentFormController', ['$scope', '$http', 'depService', 'notificationService',
+        function ($scope, $http, depService, notificationService) {
+            $scope.currentDep = {name: '', location: ''};
+
+            $scope.populate = depService.populateWithTestData;
+
+            $scope.add = function () {
+                depService.addOne($scope.currentDep);
+                notificationService.updateNotification($scope.currentDep.name + ' department was added.');
             };
 
         }
     ]);
 
 
-    departments.controller('DepartmentFormController', ['$scope', '$http',
-        function ($scope, $http) {
-            this.currentDep = {name: '', location: ''};
+    departments.controller('NotificationBarController', ['$scope', '$rootScope',
+        function ($scope, $rootScope) {
+            var defaultNotification = 'nothing happened';
 
-            var $this = this;
-
-
-            this.isEmpty = function () {
-                return this.depList.length == 0;
-            };
-
-            this.populate = function () {
-                requests.populate($http, $scope.depList);
-            };
-
+            $scope.getNotification = function () {
+                var result = $rootScope.lastNotification ? $rootScope.lastNotification : defaultNotification;
+                return $rootScope.lastNotification;
+            }
 
         }
     ]);
@@ -221,4 +200,52 @@
         };
     });
 
+    departments.directive("notificationBar", function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'custom-ng-tags/notification-bar.jsp'
+        };
+    });
+
 })();
+
+
+//var requests = {
+//
+//    depListRequest: function () {
+//        return {method: 'get', url: '/depList'}
+//    },
+//
+//    refreshDepList: function (httpService) {
+//
+//        var result;
+//
+//        httpService({method: 'get', url: '/depList'})
+//
+//            .success(function (data) {
+//                result = data;
+//            })
+//
+//            .error(function (data) {
+//                result = 'some boy';
+//            });
+//
+//        return result;
+//    },
+//
+//
+//    populate: function (httpService, result) {
+//
+//        httpService({method: 'POST', url: '/populate'})
+//            .success(function (data) {
+//                result = data;
+//                console.log('good');
+//            })
+//            .error(function (data) {
+//                result = data;
+//                console.log('some boy');
+//            });
+//
+//    }
+//
+//};

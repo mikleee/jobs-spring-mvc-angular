@@ -25,6 +25,13 @@ public class DepartmentServiceImpl extends DepartmentService {
     }
 
     @Override
+    public void deleteAll() throws DataSourceException {
+        for (Department department : departmentDAO.getAll()) {
+            departmentDAO.delete(department.getId());
+        }
+    }
+
+    @Override
     public void add(Department department) throws DataSourceException, ValidationException {
         try {
             validator.validate(department);

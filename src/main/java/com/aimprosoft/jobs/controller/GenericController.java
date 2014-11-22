@@ -8,6 +8,7 @@ import com.aimprosoft.jobs.service.DepartmentService;
 import com.aimprosoft.jobs.service.EmployeeService;
 import com.aimprosoft.jobs.service.ValidationException;
 import com.aimprosoft.jobs.util.RandomObjectCreator;
+import org.apache.log4j.Logger;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +36,7 @@ public abstract class GenericController {
     public final static String EMP_EMAIL = "e-mail";
     public final static String EMP_SALARY = "salary";
 
+    protected Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     protected EmployeeService employeeService;
@@ -45,7 +47,7 @@ public abstract class GenericController {
     /**
      * Redirects request to error page which contains exception message
      */
-    @ExceptionHandler({EvilUserDetectedException.class, DataSourceException.class})
+    @ExceptionHandler({ValidationException.class, EvilUserDetectedException.class, DataSourceException.class})
     public ModelAndView applicationExceptionHandler(ApplicationException e) {
         return doExceptionScenario(e);
     }

@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -21,6 +22,7 @@ public class DepartmentsController extends GenericController {
     @RequestMapping(value = "/populate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public List<Department> populate() throws DataSourceException, ValidationException {
+        logger.trace("/populate request");
 
         for (int i = 0; i < 5; i++) {
             departmentService.add(RandomObjectCreator.createRandomObject(new Department(), null));
@@ -28,21 +30,27 @@ public class DepartmentsController extends GenericController {
 
         List<Department> departments = departmentService.getAll();
 
-//        for (int i = 0; i < 5; i++) {
-//            Integer depId = departments.get(RandomObjectCreator.randomNumber(departments.size())).getId();
-//
-//            Employee employee = RandomObjectCreator.createRandomObject(new Employee(), null);
-//            employee.setDepartment(new Department(depId));
-//
-//            employeeService.add(employee);
-//        }
+        for (int i = 0; i < 5; i++) {
+            Integer depId = departments.get(RandomObjectCreator.randomNumber(departments.size())).getId();
 
-        return null;
+            Employee employee = RandomObjectCreator.createRandomObject(new Employee(), null);
+            employee.setDepartment(new Department(depId));
+
+            try {
+                employeeService.add(employee);
+            } catch (Throwable t) {
+                logger.debug(employee + " adding failed, reason : " + t.getCause().getMessage());
+            }
+
+        }
+
+        return departmentService.getAll();
     }
 
     @RequestMapping(value = "/depList", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Department> showDepartmentList() throws DataSourceException {
+        logger.trace("/depList request");
         return departmentService.getAll();
     }
 
@@ -52,6 +60,13 @@ public class DepartmentsController extends GenericController {
     public Integer deleteDepartment(@RequestParam(required = false) Integer depId) throws DataSourceException, EvilUserDetectedException {
         departmentService.delete(depId);
         return depId;
+    }
+
+    @RequestMapping(value = "/deleteAllDepartments", method = RequestMethod.POST)
+    @ResponseBody
+    public void deleteAll() throws DataSourceException, EvilUserDetectedException {
+        logger.trace("/deleteAllDepartments request");
+        departmentService.deleteAll();
     }
 
 
@@ -67,13 +82,17 @@ public class DepartmentsController extends GenericController {
 
     }
 
-    @RequestMapping(value = "/doDepAddOrUpdate", method = RequestMethod.POST)
+    @RequestMapping(value = "/doDepAddOrUpdate", consumes = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public Department addOrUpdateDepartment(@ModelAttribute Department department) throws DataSourceException, EvilUserDetectedException, ValidationException {
-        if (department.getId() == null) {
-            departmentService.add(department);
-        } else {
-            departmentService.update(department);
+    public Department addOrUpdateDepartment(Department department, HttpServletRequest request) throws DataSourceException, EvilUserDetectedException, ValidationException {
+        try {
+            if (department.getId() == null) {
+                departmentService.add(department);
+            } else {
+                departmentService.update(department);
+            }
+        } catch (ValidationException e) {
+            logger.debug(e, e);
         }
         return department;
     }
