@@ -47,8 +47,8 @@ public abstract class GenericController {
     /**
      * Redirects request to error page which contains exception message
      */
-    @ExceptionHandler({ValidationException.class, EvilUserDetectedException.class, DataSourceException.class})
-    public ModelAndView applicationExceptionHandler(ApplicationException e) {
+    @ExceptionHandler({Throwable.class})
+    public ModelAndView applicationExceptionHandler(Throwable e) {
         return doExceptionScenario(e);
     }
 

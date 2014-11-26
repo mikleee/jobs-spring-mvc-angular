@@ -19,6 +19,7 @@
     <script type="text/javascript" src="${jQueryPath}"></script>
     <script type="text/javascript" src="<c:url value ="${bootstrapJSPath}"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/departments.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/directives.js"/>"></script>
 
     <link href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"
           media="all">
@@ -32,7 +33,7 @@
 <body>
 
 
-<notification-bar class="notification-bar"></notification-bar>
+<notification-bar></notification-bar>
 
 
 <div class="rounded col-70 text-section-default separated-y" ng-controller="MainController as mainCtrl">
@@ -49,7 +50,7 @@
         </div>
 
 
-        <div class="row separated-y row-60 scrollable-y " ng-show="mainCtrl.isDepList()">
+        <div class="row separated-y row-60" ng-show="mainCtrl.isDepList()">
             <department-list></department-list>
         </div>
 

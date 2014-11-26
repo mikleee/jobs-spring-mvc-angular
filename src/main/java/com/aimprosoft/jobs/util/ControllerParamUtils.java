@@ -34,7 +34,7 @@ public class ControllerParamUtils {
         return "ErrorPage";
     }
 
-    public static ModelAndView doExceptionScenario(ApplicationException e) {
+    public static ModelAndView doExceptionScenario(Throwable e) {
         return new ModelAndView("ErrorPage", "exceptionMessage", e.getMessage());
     }
 

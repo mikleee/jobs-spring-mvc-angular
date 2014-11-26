@@ -12,127 +12,262 @@
 
     var activeTab = 1;
 
+    var EMPTY_DEPARTMENT = {name: '', location: ''};
+    var EMPTY_PAGE = {number: 0, content: []};
 
-    var departments = angular.module('departments', []);
+    var SOME_ARRAY = [
+        {name: 'name1', location: 'location1'},
+        {name: 'name2', location: 'location2'},
+        {name: 'name3', location: 'location3'},
+        {name: 'name4', location: 'location4'},
+        {name: 'name5', location: 'location5'}
+//        {name: 'fghgft', location: 'rth'}
+    ];
+
+
+    var departments = angular.module('departments', ['directives']);
+
 
     departments.service('notificationService', [ '$rootScope',
         function ($rootScope) {
 
+            var success = 'SUCCESS', fail = 'FAIL', waiting = 'WAITING';
+
+            $rootScope.lastNotification = {status: success, message: 'nothing happened'};
+
             return {
+
+                notifySuccess: function (message) {
+                    $rootScope.lastNotification.message = message;
+                    $rootScope.lastNotification.status = success;
+                },
+
+                notifyFail: function (message) {
+                    $rootScope.lastNotification.message = message;
+                    $rootScope.lastNotification.status = fail;
+                },
+
+                notifyWaiting: function (message) {
+                    $rootScope.lastNotification.message = message;
+                    $rootScope.lastNotification.status = waiting;
+                },
+
                 updateNotification: function (notification) {
-                    $rootScope.lastNotification = notification;
+                    $rootScope.lastNotification.message = notification.message;
+                    $rootScope.lastNotification.status = notification.status;
+                },
+
+                isFail: function () {
+                    return  $rootScope.lastNotification.status == fail;
+                },
+
+                isSuccess: function () {
+                    return  $rootScope.lastNotification.status == success;
+                },
+
+                isWaiting: function () {
+                    return  $rootScope.lastNotification.status == waiting;
+                },
+
+                getMessage: function () {
+                    return  $rootScope.lastNotification.message;
                 }
+
             }
 
         }
     ]);
 
-    departments.service('depService', [ '$http', '$q', '$rootScope',
-        function ($http, $q, $rootScope) {
 
-            var handleCallback = function (response, notificationMessage, logMessage) {
-                $rootScope.depList = response.data;
-                $rootScope.lastNotification = notificationMessage;
-                logData('logMessage', response);
+    departments.service('pagingService', function () {
+
+        return {
+
+            paginate: function (array, pageSize) {
+                var result = [];
+
+                for (var i = 0; i < array.length;) {
+                    var page = {number: result.length + 1, content: []};
+
+                    while (page.content.length < pageSize && i < array.length) {
+                        page.content.push(array[i]);
+                        i++;
+                    }
+
+                    result.push(page);
+
+                }
+
+                return result;
+            }
+        };
+    });
+
+
+    departments.service('depService', [ '$http', 'notificationService', 'pagingService',
+        function ($http, notificationService, pagingService) {
+
+            var depList = [];
+            var pagedDepList = [];
+
+            var handleSuccessCallback = function (response, notificationMessage, logMessage) {
+                depList = response.data;
+                logData(logMessage, response);
+                notificationService.notifySuccess(notificationMessage);
+            };
+
+            var handleFailCallback = function (response, notificationMessage) {
+                notificationService.notifyFail(notificationMessage);
             };
 
             return {
 
                 getDepList: function () {
-                    var result = $rootScope.depList ? $rootScope.depList : [];
-                    logData('depService.getDepList() executed', result);
-                    return result;
+                    return depList;
                 },
 
                 setDepList: function (response) {
-                    $rootScope.depList = response.data;
+                    depList = response.data;
                 },
 
                 refreshDepList: function () {
+                    notificationService.notifyWaiting('Fetching department list...');
                     $http.get('/depList').then(
                         function (response) {
-                            handleCallback(response, 'Department list was updated', 'depService.refreshDepList.then executed');
+                            handleSuccessCallback(response, 'Department list was updated.', 'depService.refreshDepList.then executed');
+                        }, function (response) {
+                            handleFailCallback(response, 'Department list updating failed.');
                         }
                     );
 
                 },
 
                 populateWithTestData: function (result) {
+                    notificationService.notifyWaiting('Populating department list with test data...');
                     $http.post('/populate').then(
                         function (response) {
-                            handleCallback(response, 'Department list was populated with test data', 'depService.populateWithTestData.then executed');
+                            handleSuccessCallback(response, 'Department list was populated with test data', 'depService.populateWithTestData.then executed');
+                        }, function (response) {
+                            handleFailCallback(response, 'Populating department list with test data failed.');
                         }
                     );
                 },
 
                 deleteAll: function (result) {
+                    notificationService.notifyWaiting('Clearing department list...');
                     $http.post('/deleteAllDepartments').then(
                         function (response) {
-                            $rootScope.depList = [];
-                            $rootScope.lastNotification = 'All departments were deleted';
+                            handleSuccessCallback({data: []}, 'All departments were deleted.', 'depService.deleteAll.then executed');
+                        }, function (response) {
+                            handleFailCallback(response, 'Deleting all departments failed.');
                         }
                     );
                 },
 
                 addOne: function (department) {
-                    $http.post('/doDepAddOrUpdate', department).then(
+                    notificationService.notifyWaiting('Adding ' + angular.toJson(department) + ' department...');
+                    $http.post('/addDep', department).then(
                         function (response) {
-                            handleCallback(response, department.name + ' department was added.', 'depService.addOne.then executed');
+                            handleSuccessCallback(response, angular.toJson(department) + ' department was added.', 'depService.addOne.then executed');
+                            department.name = '';
+                            department.location = '';
+                        }, function (response) {
+                            handleFailCallback(response, department.name + ' department adding failed.');
+                        }
+                    );
+                },
+
+                deleteOne: function (id) {
+                    notificationService.notifyWaiting('Adding ' + id + ' department...');
+                    $http.post('/depDelete', {id: id}).then(
+                        function (response) {
+                            handleSuccessCallback(response, id + ' department was deleted.', 'depService.addOne.then executed');
+                        }, function (response) {
+                            handleFailCallback(response, id + ' department deleting failed.');
                         }
                     );
                 }
 
             }
         }
-    ]);
+
+    ])
+    ;
 
 
-    departments.controller('MainController', function () {
+    departments.controller('MainController', ['$rootScope', function ($rootScope) {
+
+        $rootScope.activeTab = 1;
 
         this.isDepList = function () {
-            return activeTab == 1;
+            return $rootScope.activeTab == 1;
         };
 
         this.isDepForm = function () {
-            return activeTab == 2;
-        }
-
-    });
-
-
-    departments.controller('TabController', ['$scope', function () {
-
-        this.setTab = function (tabNo) {
-            activeTab = tabNo;
-        };
-
-        this.isSet = function (tabNo) {
-            return tabNo == activeTab;
+            return $rootScope.activeTab == 2;
         }
 
     }]);
 
 
-    departments.controller('departmentListController', ['$scope', 'depService', '$rootScope',
-        function ($scope, depService, $rootScope) {
+    departments.controller('TabController', ['$rootScope', function ($rootScope) {
 
+        this.setTab = function (tabNo) {
+            $rootScope.activeTab = tabNo;
+        };
+
+        this.isSet = function (tabNo) {
+            return tabNo == $rootScope.activeTab;
+        }
+
+    }]);
+
+
+    departments.controller('DepartmentListController', ['$scope', 'depService', 'notificationService', 'pagingService',
+        function ($scope, depService, notificationService, pagingService) {
             depService.refreshDepList();
 
-            $scope.showDepListInJson = false;
+            var pagedList = [];
+
+            $scope.config = {
+                showDepListInJson: false,
+                currentPage: 1,
+                pageSize: 5
+            };
+
+            $scope.depList = function () {
+                var result = depService.getDepList();
+                pagedList = pagingService.paginate(result, $scope.config.pageSize);
+                return result;
+            };
+
+            $scope.pages = function () {
+                return pagedList;
+            };
+
+            $scope.deleteAll = depService.deleteAll;
 
             $scope.add = function () {
-                $scope.depList().push({id: -10, name: 'jopa', location: 'joppa'});
-                $rootScope.lastNotification = 'Fake department added';
+                depService.getDepList().push({id: -10, name: 'jopa', location: 'joppa'});
+                notificationService.notifySuccess('Fake department added');
+            };
+
+            $scope.deleteOne = function (id) {
+                depService.deleteOne(id);
             };
 
             $scope.isEmpty = function () {
-                logData('departmentListController.isEmpty', $scope.depList());
-                return $scope.depList().length == 0;
+                return depService.getDepList().length == 0;
             };
 
-            $scope.depList = depService.getDepList;
+//            $scope.currentPage = function () {
+//                return $scope.pagedList()[$scope.config.currentPage].content;
+//            };
 
-            $scope.deleteAll = depService.deleteAll;
+            $scope.getPagedList = function () {
+                return pagedList;
+            };
+
 
         }
     ]);
@@ -146,106 +281,39 @@
 
             $scope.add = function () {
                 depService.addOne($scope.currentDep);
-                notificationService.updateNotification($scope.currentDep.name + ' department was added.');
+            };
+
+            $scope.isEmptyDep = function () {
+                return $scope.currentDep.name == '' &&
+                    $scope.currentDep.location == '';
             };
 
         }
     ]);
 
 
-    departments.controller('NotificationBarController', ['$scope', '$rootScope',
-        function ($scope, $rootScope) {
-            var defaultNotification = 'nothing happened';
+    departments.controller('NotificationBarController', ['$scope', 'notificationService',
+        function ($scope, notificationService) {
+            $scope.getMessage = notificationService.getMessage;
+            $scope.isFail = notificationService.isFail;
+            $scope.isSuccess = notificationService.isSuccess;
+            $scope.isWaiting = notificationService.isWaiting;
 
-            $scope.getNotification = function () {
-                var result = $rootScope.lastNotification ? $rootScope.lastNotification : defaultNotification;
-                return $rootScope.lastNotification;
-            }
-
+            $scope.imgPath = function () {
+                var result;
+                if ($scope.isFail()) {
+                    result = 'fail.png';
+                } else if ($scope.isSuccess()) {
+                    result = 'success.png';
+                } else if ($scope.isWaiting()) {
+                    result = 'waiting.gif';
+                }
+                return result;
+            };
         }
     ]);
 
 
-    /****************************directives************************************/
+})
+    ();
 
-
-    departments.directive("actionButtons", function () {
-        return {
-            restrict: 'E',
-            templateUrl: 'custom-ng-tags/action-buttons.jsp'
-        };
-    });
-
-
-    departments.directive("departmentForm", function () {
-        return {
-            restrict: 'E',
-            templateUrl: 'custom-ng-tags/department-form.jsp'
-        };
-    });
-
-
-    departments.directive("departmentList", function () {
-        return {
-            restrict: 'E',
-            templateUrl: 'custom-ng-tags/department-list.jsp'
-        };
-    });
-
-
-    departments.directive("tabsPanel", function () {
-        return {
-            restrict: 'E',
-            templateUrl: 'custom-ng-tags/tabs-panel.jsp'
-        };
-    });
-
-    departments.directive("notificationBar", function () {
-        return {
-            restrict: 'E',
-            templateUrl: 'custom-ng-tags/notification-bar.jsp'
-        };
-    });
-
-})();
-
-
-//var requests = {
-//
-//    depListRequest: function () {
-//        return {method: 'get', url: '/depList'}
-//    },
-//
-//    refreshDepList: function (httpService) {
-//
-//        var result;
-//
-//        httpService({method: 'get', url: '/depList'})
-//
-//            .success(function (data) {
-//                result = data;
-//            })
-//
-//            .error(function (data) {
-//                result = 'some boy';
-//            });
-//
-//        return result;
-//    },
-//
-//
-//    populate: function (httpService, result) {
-//
-//        httpService({method: 'POST', url: '/populate'})
-//            .success(function (data) {
-//                result = data;
-//                console.log('good');
-//            })
-//            .error(function (data) {
-//                result = data;
-//                console.log('some boy');
-//            });
-//
-//    }
-//
-//};

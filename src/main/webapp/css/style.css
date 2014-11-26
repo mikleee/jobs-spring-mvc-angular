@@ -67,7 +67,19 @@ td, th {
 }
 
 .developer-info-area {
-    font-size: 8px;
+    font-size: 12px;
+    text-align: justify;
+    background-color: rgba(0, 213, 255, 0.03);
+    border: 1px solid rgba(137, 225, 244, 0.5);
+    padding: 4px;
+    color: rgba(0, 113, 149, 0.95);
+    border-radius: 5px;
+    vertical-align: super;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.info-area {
     text-align: justify;
     background-color: rgba(0, 213, 255, 0.1);
     border: 1px solid rgb(137, 225, 244);
@@ -77,15 +89,34 @@ td, th {
     vertical-align: super;
 }
 
-.notification-bar{
+.notificationBar {
     font-size: 12px;
     text-align: right;
-    background-color: rgba(0, 213, 255, 0.1);
-    border: 1px solid rgb(137, 225, 244);
-    padding: 4px;
-    color: rgba(0, 113, 149, 0.95);
-    border-radius: 5px;
     position: fixed;
     top: 2px;
     right: 2px;
+}
+
+.failNotification {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgb(244, 137, 137);
+    padding: 4px;
+    color: rgba(149, 0, 0, 0.95);
+    border-radius: 5px;
+}
+
+.successNotification {
+    background-color: rgba(0, 255, 32, 0.1);
+    border: 1px solid rgb(137, 244, 151);
+    padding: 4px;
+    color: rgba(4, 149, 0, 0.95);
+    border-radius: 5px;
+}
+
+.waitingNotification {
+    background-color: rgba(255, 184, 0, 0.1);
+    border: 1px solid rgb(244, 222, 137);
+    padding: 4px;
+    color: rgba(149, 113, 0, 0.95);
+    border-radius: 5px;
 }

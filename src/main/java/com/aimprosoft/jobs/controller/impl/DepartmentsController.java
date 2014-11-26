@@ -7,6 +7,7 @@ import com.aimprosoft.jobs.model.impl.Department;
 import com.aimprosoft.jobs.model.impl.Employee;
 import com.aimprosoft.jobs.service.ValidationException;
 import com.aimprosoft.jobs.util.RandomObjectCreator;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -55,11 +56,12 @@ public class DepartmentsController extends GenericController {
     }
 
 
-    @RequestMapping(value = "/depDelete", method = RequestMethod.POST)
+    @RequestMapping(value = "/depDelete", consumes = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public Integer deleteDepartment(@RequestParam(required = false) Integer depId) throws DataSourceException, EvilUserDetectedException {
-        departmentService.delete(depId);
-        return depId;
+    public List<Department> deleteDepartment(@RequestBody Department department) throws DataSourceException, EvilUserDetectedException {
+        logger.trace("/depDelete request");
+        departmentService.delete(department.getId());
+        return departmentService.getAll();
     }
 
     @RequestMapping(value = "/deleteAllDepartments", method = RequestMethod.POST)
@@ -82,19 +84,18 @@ public class DepartmentsController extends GenericController {
 
     }
 
-    @RequestMapping(value = "/doDepAddOrUpdate", consumes = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "/addDep", consumes = "application/json", method = RequestMethod.POST)
     @ResponseBody
-    public Department addOrUpdateDepartment(Department department, HttpServletRequest request) throws DataSourceException, EvilUserDetectedException, ValidationException {
-        try {
-            if (department.getId() == null) {
-                departmentService.add(department);
-            } else {
-                departmentService.update(department);
-            }
-        } catch (ValidationException e) {
-            logger.debug(e, e);
+    public List<Department> addOrUpdateDepartment(@RequestBody Department department, HttpServletRequest request) throws DataSourceException, EvilUserDetectedException, ValidationException {
+        logger.trace("/addDep request");
+
+        if (department.getId() == null) {
+            departmentService.add(department);
+        } else {
+            departmentService.update(department);
         }
-        return department;
+
+        return departmentService.getAll();
     }
 
 
