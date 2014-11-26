@@ -90,33 +90,40 @@ td, th {
 }
 
 .notificationBar {
-    font-size: 12px;
-    text-align: right;
+    display: flex;
+    font-size: 10px;
     position: fixed;
     top: 2px;
     right: 2px;
+    text-align: left;
 }
 
 .failNotification {
     background-color: rgba(255, 0, 0, 0.1);
     border: 1px solid rgb(244, 137, 137);
-    padding: 4px;
+    padding: 5px;
     color: rgba(149, 0, 0, 0.95);
     border-radius: 5px;
+    width: 250px;
+    overflow-wrap: break-word;
 }
 
 .successNotification {
     background-color: rgba(0, 255, 32, 0.1);
     border: 1px solid rgb(137, 244, 151);
-    padding: 4px;
+    padding: 5px;
     color: rgba(4, 149, 0, 0.95);
     border-radius: 5px;
+    width: 250px;
+    overflow-wrap: break-word;
 }
 
 .waitingNotification {
     background-color: rgba(255, 184, 0, 0.1);
     border: 1px solid rgb(244, 222, 137);
-    padding: 4px;
+    padding: 5px;
     color: rgba(149, 113, 0, 0.95);
     border-radius: 5px;
+    width: 250px;
+    overflow-wrap: break-word;
 }

@@ -48,5 +48,12 @@
         };
     });
 
+    directives.directive("developerBar", function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'custom-ng-tags/developer-bar.jsp'
+        };
+    });
+
 })();
 

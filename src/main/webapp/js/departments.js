@@ -86,6 +86,10 @@
             paginate: function (array, pageSize) {
                 var result = [];
 
+                if (pageSize == 0) {
+                    return result;
+                }
+
                 for (var i = 0; i < array.length;) {
                     var page = {number: result.length + 1, content: []};
 
@@ -107,11 +111,13 @@
     departments.service('depService', [ '$http', 'notificationService', 'pagingService',
         function ($http, notificationService, pagingService) {
 
+            var pageSize = 0;
             var depList = [];
             var pagedDepList = [];
 
             var handleSuccessCallback = function (response, notificationMessage, logMessage) {
                 depList = response.data;
+                pagedDepList = pagingService.paginate(depList, pageSize);
                 logData(logMessage, response);
                 notificationService.notifySuccess(notificationMessage);
             };
@@ -130,8 +136,17 @@
                     depList = response.data;
                 },
 
-                refreshDepList: function () {
-                    notificationService.notifyWaiting('Fetching department list...');
+                getPagedData: function () {
+                    return pagedDepList;
+                },
+
+                setPageSize: function (newPageSize) {
+                    pageSize = newPageSize;
+                },
+
+                refreshDepList: function (pageSize) {
+                    this.setPageSize(pageSize);
+                    notificationService.notifyWaiting('Fetching department list (page size = ' + pageSize + ')...');
                     $http.get('/depList').then(
                         function (response) {
                             handleSuccessCallback(response, 'Department list was updated.', 'depService.refreshDepList.then executed');
@@ -177,13 +192,13 @@
                     );
                 },
 
-                deleteOne: function (id) {
-                    notificationService.notifyWaiting('Adding ' + id + ' department...');
-                    $http.post('/depDelete', {id: id}).then(
+                deleteOne: function (department) {
+                    notificationService.notifyWaiting('Deleting ' + angular.toJson(department) + ' department...');
+                    $http.post('/depDelete', department).then(
                         function (response) {
-                            handleSuccessCallback(response, id + ' department was deleted.', 'depService.addOne.then executed');
+                            handleSuccessCallback(response, angular.toJson(department) + ' department was deleted.', 'depService.addOne.then executed');
                         }, function (response) {
-                            handleFailCallback(response, id + ' department deleting failed.');
+                            handleFailCallback(response, department + ' department deleting failed.');
                         }
                     );
                 }
@@ -225,48 +240,53 @@
 
     departments.controller('DepartmentListController', ['$scope', 'depService', 'notificationService', 'pagingService',
         function ($scope, depService, notificationService, pagingService) {
-            depService.refreshDepList();
 
-            var pagedList = [];
-
-            $scope.config = {
+            $scope.models = {
                 showDepListInJson: false,
-                currentPage: 1,
                 pageSize: 5
             };
 
-            $scope.depList = function () {
-                var result = depService.getDepList();
-                pagedList = pagingService.paginate(result, $scope.config.pageSize);
-                return result;
+            $scope.data = {
+                currentPageNo: 1,
+                rawData: depService.getDepList,
+                pagedData: depService.getPagedData,
+                currentPage: function () {
+                    return this.pagedData()[this.currentPageNo - 1];
+                }
             };
 
-            $scope.pages = function () {
-                return pagedList;
+            $scope.actions = {
+
+                addFake: function () {
+                    depService.getDepList().push({id: -10, name: 'jopa', location: 'joppa'});
+                    notificationService.notifySuccess('Fake department added');
+                },
+
+                deleteAll: depService.deleteAll,
+
+                deleteOne: function (department) {
+                    depService.deleteOne(department);
+                },
+
+                setCurrentPage: function (page) {
+                    $scope.data.currentPageNo = page.number;
+                }
+
             };
 
-            $scope.deleteAll = depService.deleteAll;
+            $scope.conditions = {
 
-            $scope.add = function () {
-                depService.getDepList().push({id: -10, name: 'jopa', location: 'joppa'});
-                notificationService.notifySuccess('Fake department added');
+                isEmpty: function () {
+                    return depService.getDepList().length == 0;
+                },
+
+                isCurrentPage: function (page) {
+                    return page.number == $scope.data.currentPageNo;
+                }
+
             };
 
-            $scope.deleteOne = function (id) {
-                depService.deleteOne(id);
-            };
-
-            $scope.isEmpty = function () {
-                return depService.getDepList().length == 0;
-            };
-
-//            $scope.currentPage = function () {
-//                return $scope.pagedList()[$scope.config.currentPage].content;
-//            };
-
-            $scope.getPagedList = function () {
-                return pagedList;
-            };
+            depService.refreshDepList($scope.models.pageSize);
 
 
         }
@@ -314,6 +334,18 @@
     ]);
 
 
-})
-    ();
+    departments.controller('DeveloperBarController', ['$scope', 'depService',
+        function ($scope, depService) {
+            $scope.show = false;
+
+            $scope.data = {
+                rawData: depService.getDepList,
+                pagedData: depService.getPagedData
+            };
+
+        }
+    ]);
+
+
+})();
 

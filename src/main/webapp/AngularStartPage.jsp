@@ -54,6 +54,10 @@
             <department-list></department-list>
         </div>
 
+        <div>
+            <developer-bar></developer-bar>
+        </div>
+
     </div>
 
 </div>
