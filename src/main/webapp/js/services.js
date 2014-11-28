@@ -377,7 +377,7 @@
                 return result;
             },
 
-            defaultValidationResult: {isValid: true},
+            defaultValidationResult: {isValid: true}
 
         };
     });
