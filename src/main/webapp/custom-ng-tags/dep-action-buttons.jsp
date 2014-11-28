@@ -14,7 +14,7 @@
             </a>
         </li>
         <li>
-            <a class="text-sm" href="#" ng-click="actions.showEditForm();">
+            <a class="text-sm" href="#" ng-click="actions.showEditForm(dep);">
                 Edit
             </a>
         </li>

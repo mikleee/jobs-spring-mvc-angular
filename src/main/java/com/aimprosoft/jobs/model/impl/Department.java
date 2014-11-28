@@ -4,15 +4,19 @@ import com.aimprosoft.jobs.dao.DataSourceException;
 import com.aimprosoft.jobs.model.PersistEntity;
 import com.aimprosoft.jobs.service.DepartmentService;
 import com.aimprosoft.jobs.service.impl.DepartmentServiceImpl;
+import com.aimprosoft.jobs.util.CommonUtils;
 import com.aimprosoft.jobs.util.SpringUtils;
 import net.sf.oval.constraint.Length;
 import net.sf.oval.constraint.NotNull;
 import net.sf.oval.constraint.ValidateWithMethod;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.aimprosoft.jobs.util.CommonUtils.makeJson;
 
 @Entity
 @Table(name = "department")
@@ -30,7 +34,7 @@ public class Department implements PersistEntity {
     @NotNull(message = "*department name should be not null")
     @Length(min = 3, message = "*department name is too short")
 //    @MatchPattern(pattern = ".*[]")
-    @ValidateWithMethod(message = "*department name is not unique", methodName = "isUnique", parameterType = String.class)
+    @ValidateWithMethod(message = "department name is not unique", methodName = "isUnique", parameterType = String.class)
     private String name;
 
     @Column(name = "location")
@@ -83,7 +87,7 @@ public class Department implements PersistEntity {
 
     @Override
     public String toString() {
-        return "DEPARTMENT # " + id + ", name: " + name + ", location: " + location + ", employees: " + employeeList + ".";
+        return makeJson(this);
     }
 
 

@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -84,10 +86,10 @@ public class DepartmentsController extends GenericController {
 
     }
 
-    @RequestMapping(value = "/addDep", consumes = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "/persistDepartment", consumes = "application/json", method = RequestMethod.POST)
     @ResponseBody
     public List<Department> addOrUpdateDepartment(@RequestBody Department department, HttpServletRequest request) throws DataSourceException, EvilUserDetectedException, ValidationException {
-        logger.trace("/addDep request");
+        logger.trace("/persistDepartment request");
 
         if (department.getId() == null) {
             departmentService.add(department);
@@ -100,11 +102,13 @@ public class DepartmentsController extends GenericController {
 
 
     @ExceptionHandler(ValidationException.class)
-    public ModelAndView validationExceptionHandler(ValidationException e) throws DataSourceException, EvilUserDetectedException {
-        ModelMap map = new ModelMap();
-        map.put("errors", e.getMessenger());
-        map.put("incorrectDepartment", e.getIncorrectEntity());
-        return showAddDepartmentForm(null, map);
+    @ResponseBody
+    public Map<String, Object> validationExceptionHandler(ValidationException e) throws DataSourceException, EvilUserDetectedException {
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", "validation-error");
+        result.put("serverMessages", e.getMessenger());
+        return result;
+
     }
 
 

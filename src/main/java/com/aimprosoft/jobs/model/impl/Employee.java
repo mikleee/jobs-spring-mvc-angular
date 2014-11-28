@@ -4,6 +4,7 @@ import com.aimprosoft.jobs.dao.DataSourceException;
 import com.aimprosoft.jobs.model.PersistEntity;
 import com.aimprosoft.jobs.service.EmployeeService;
 import com.aimprosoft.jobs.service.impl.EmployeeServiceImpl;
+import com.aimprosoft.jobs.util.CommonUtils;
 import com.aimprosoft.jobs.util.SpringUtils;
 import net.sf.oval.constraint.Email;
 import net.sf.oval.constraint.Length;
@@ -14,6 +15,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+
+import static com.aimprosoft.jobs.util.CommonUtils.makeJson;
 
 @javax.persistence.Entity
 @Table(name = "employee")
@@ -118,8 +121,7 @@ public class Employee implements PersistEntity {
 
     @Override
     public String toString() {
-        return "EMPLOYEE [ id: " + id + ", name: " + name + ", salary: " + salary + ", email: " +
-                email + ", birth: " + birth + ", department: " + department.getId() + " ]";
+        return makeJson(this);
     }
 
 

@@ -3,6 +3,6 @@
         <a href="#">Departments</a>
     </li>
     <li role="presentation" ng-class="{ active : conditions.isDepForm() }" ng-click="actions.setDepFormAsActive()">
-        <a href="#">{{getDepTabTitle()}}</a>
+        <a href="#">{{tcConditions.isAddDepStatus() ? 'Add new department' : 'Edit department'}}</a>
     </li>
 </ul>

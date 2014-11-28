@@ -20,7 +20,8 @@
     <script type="text/javascript" src="<c:url value ="${bootstrapJSPath}"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/main.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/directives.js"/>"></script>
-    <script type="text/javascript" src="<c:url value ="js/services.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/departmentServices.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/commonServices.js"/>"></script>
 
     <link href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"
           media="all">
@@ -37,7 +38,7 @@
 <notification-bar></notification-bar>
 
 
-<div class="rounded col-70 text-section-default separated-y" ng-controller="MainController">
+<div class="col-70 text-section-default separated-y" ng-controller="MainController">
 
 
     <div class="container">

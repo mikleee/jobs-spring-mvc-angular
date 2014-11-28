@@ -1,27 +1,7 @@
 (function () {
 
 
-//    function log(message) {
-//        console.log(message);
-//    }
-//
-//    function logData(message, data) {
-//        log(message + ':');
-//        log(data);
-//    }
-//
-//
-//    var SOME_ARRAY = [
-//        {name: 'name1', location: 'location1', employeeList: []},
-//        {name: 'name2', location: 'location2'},
-//        {name: 'name3', location: 'location3'},
-//        {name: 'name4', location: 'location4'},
-//        {name: 'name5', location: 'location5'}
-////        {name: 'fghgft', location: 'rth'}
-//    ];
-
-
-    var departments = angular.module('departments', ['directives', 'services']);
+    var departments = angular.module('departments', ['directives', 'departmentServices']);
 
 
     departments.controller('MainController', ['$scope', 'tabService', function ($scope, tabService) {
@@ -36,8 +16,8 @@
     }]);
 
 
-    departments.controller('TabController', ['$scope', '$rootScope', 'tabService', 'departmentFormService',
-        function ($scope, $rootScope, tabService, departmentFormService) {
+    departments.controller('TabController', ['$scope', 'tabService', 'departmentFormService',
+        function ($scope, tabService, departmentFormService) {
 
             $scope.actions = {
                 setDepListAsActive: tabService.setDepListAsActive,
@@ -46,13 +26,16 @@
                 setEmpFormAsActive: tabService.setEmpFormAsActive
             };
 
-            $scope.getDepTabTitle = departmentFormService.getTitle;
+            $scope.tcConditions = {
+                isAddDepStatus: departmentFormService.isAddStatus
+            };
+
 
         }]);
 
 
-    departments.controller('DepartmentListController', ['$scope', 'depService', 'departmentFormService',
-        function ($scope, depService, departmentFormService) {
+    departments.controller('DepartmentListController', ['$scope', '$rootScope', 'depService', 'departmentFormService', 'tabService',
+        function ($scope, $rootScope, depService, departmentFormService, tabService) {
 
             $scope.models = {
                 pageSize: 5,
@@ -69,47 +52,48 @@
             };
 
             $scope.actions = {
-
                 populate: depService.populateWithTestData,
-                deleteAll: depService.deleteAll,
-                showEditForm: departmentFormService.showEditForm,
-                showAddForm: departmentFormService.showAddForm,
-
+                deleteAll: function () {
+                    $scope.data.currentPageNo = 1;
+                    depService.deleteAll();
+                    $rootScope.$broadcast('CLEAR_DEP_FORM_MODEL');
+                },
+                showEditForm: function (department) {
+                    tabService.setDepFormAsActive();
+                    departmentFormService.setEditStatus(department);
+                    $rootScope.$broadcast('CHANGE_DEP_FORM_MODEL');
+                },
+                showAddForm: function () {
+                    tabService.setDepFormAsActive();
+                    departmentFormService.showAddForm()
+                },
                 deleteOne: function (department) {
                     depService.deleteOne(department);
                     $scope.data.currentPageNo = 1;
                 },
-
                 setCurrentPage: function (page) {
                     $scope.data.currentPageNo = page.number;
                 },
-
                 setPageSize: function (pageSize) {
                     $scope.data.currentPageNo = 1;
                     $scope.models.pageSize = pageSize;
                     depService.repaginate(pageSize);
                 }
-
             };
 
             $scope.conditions = {
-
                 isEmpty: function () {
                     return depService.getDepList().length == 0;
                 },
-
                 noEmployees: function (department) {
                     return department.employeeList.length == 0;
                 },
-
                 isCurrentPage: function (page) {
                     return page.number == $scope.data.currentPageNo;
                 },
-
                 isCurrentPageSize: function (pageSize) {
                     return pageSize == $scope.models.pageSize;
                 }
-
             };
 
             depService.refreshDepList($scope.models.pageSize);
@@ -121,33 +105,59 @@
     departments.controller('DepartmentFormController', ['$scope', 'depService', 'departmentFormService',
         function ($scope, depService, departmentFormService) {
 
+            $scope.$on('CHANGE_DEP_FORM_MODEL', function () {
+                $scope.currentDep = departmentFormService.getFixedDepartment();
+            });
+            //todo check in repo
+            $scope.$on('CLEAR_DEP_FORM_MODEL', function () {
+                if ($scope.conditions.isEdit()) {
+                    depService.resetDepartment($scope.currentDep);
+                }
+            });
+            $scope.$watch('currentDep.name', function (oldV, newV) {
+                depService.clearServerMessages();
+            });
+
             $scope.currentDep = {name: '', location: ''};
+
+            $scope.conditions = {
+                isEmptyDep: function () {
+                    return $scope.currentDep.name == '' && $scope.currentDep.location == '';
+                },
+                isEdit: departmentFormService.isEditStatus,
+                isAdd: departmentFormService.isAddStatus
+            };
+
+            $scope.actions = {
+                add: function () {
+                    depService.addOne($scope.currentDep);
+                },
+                setAddStatus: function () {
+                    depService.resetDepartment($scope.currentDep);
+                    departmentFormService.setAddStatus();
+                }
+            };
 
             $scope.validationResult = function () {
                 return depService.validate($scope.currentDep);
             };
 
             $scope.fieldInvalid = function (fieldName) {
-                var isDirty = !$scope.isEmptyDep(),
-                    validationResult = depService.getValidationResult();
+                var isDirty = !$scope.conditions.isEmptyDep(),
+                    validationResult = $scope.validationResult();
                 return !validationResult[fieldName].isValid && isDirty;
             };
 
-            $scope.add = function () {
-                depService.addOne($scope.currentDep);
+            $scope.validationMessage = function (fieldName) {
+                var validationResult = $scope.validationResult();
+                return validationResult[fieldName].message;
             };
 
-            $scope.isEmptyDep = function () {
-                return $scope.currentDep.name == '' && $scope.currentDep.location == '';
-            };
-
-            $scope.blur = function(){
-              console.log('blur');
-            };
+            $scope.getDepartmentForEdit = departmentFormService.getFixedDepartment;
 
         }
-    ])
-    ;
+
+    ]);
 
 
     departments.controller('NotificationBarController', ['$scope', 'notificationService',
@@ -189,6 +199,5 @@
     ]);
 
 
-})
-    ();
+})();
 
