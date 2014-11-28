@@ -10,25 +10,11 @@
         log(data);
     }
 
-    var activeTab = 1;
 
-    var EMPTY_DEPARTMENT = {name: '', location: ''};
-    var EMPTY_PAGE = {number: 0, content: []};
-
-    var SOME_ARRAY = [
-        {name: 'name1', location: 'location1'},
-        {name: 'name2', location: 'location2'},
-        {name: 'name3', location: 'location3'},
-        {name: 'name4', location: 'location4'},
-        {name: 'name5', location: 'location5'}
-//        {name: 'fghgft', location: 'rth'}
-    ];
+    var services = angular.module('services', []);
 
 
-    var departments = angular.module('departments', ['directives']);
-
-
-    departments.service('notificationService', [ '$rootScope',
+    services.service('notificationService', [ '$rootScope',
         function ($rootScope) {
 
             var success = 'SUCCESS', fail = 'FAIL', waiting = 'WAITING';
@@ -79,7 +65,7 @@
     ]);
 
 
-    departments.service('pagingService', function () {
+    services.service('pagingService', function () {
 
         return {
 
@@ -108,12 +94,17 @@
     });
 
 
-    departments.service('depService', [ '$http', 'notificationService', 'pagingService',
-        function ($http, notificationService, pagingService) {
+    services.service('depService', [ '$http', 'notificationService', 'pagingService', 'validationService',
+        function ($http, notificationService, pagingService, validationService) {
 
-            var pageSize = 0;
-            var depList = [];
-            var pagedDepList = [];
+            var pageSize = 0,
+                depList = [],
+                pagedDepList = [],
+                validationResult,
+                validationRules = {
+                    name: {pattern: '^[a-zA-Z]{3,20}$', message: 'the name should be alpha [3 - 20]'},
+                    location: {pattern: '^[a-zA-Z]{0,20}$', message: 'the location should be alpha [0 - 20]'}
+                };
 
             var handleSuccessCallback = function (response, notificationMessage, logMessage) {
                 depList = response.data;
@@ -124,6 +115,14 @@
 
             var handleFailCallback = function (response, notificationMessage) {
                 notificationService.notifyFail(notificationMessage);
+            };
+
+            var notifyValidation = function (validationResult) {
+                if (validationResult.isValid) {
+                    notificationService.notifySuccess('All correct');
+                } else {
+                    notificationService.notifyFail('Some boy, take focus on questions images');
+                }
             };
 
             return {
@@ -144,13 +143,35 @@
                     pageSize = newPageSize;
                 },
 
+                repaginate: function (newPageSize) {
+                    pageSize = newPageSize;
+                    pagedDepList = pagingService.paginate(depList, pageSize);
+                },
+
+                validate: function (department) {
+
+                    if (department.name != '' || department.location != '') {
+                        validationResult = validationService.validate(department, validationRules);
+                        notifyValidation(validationResult);
+                    } else {
+                        validationResult = {isValid: false, name: {isValid: true}, location: {isValid: true}};
+                    }
+
+                    return validationResult;
+                },
+
+                getValidationResult: function () {
+                    return validationResult;
+                },
+
                 refreshDepList: function (pageSize) {
                     this.setPageSize(pageSize);
                     notificationService.notifyWaiting('Fetching department list (page size = ' + pageSize + ')...');
                     $http.get('/depList').then(
                         function (response) {
-                            handleSuccessCallback(response, 'Department list was updated.', 'depService.refreshDepList.then executed');
+                            handleSuccessCallback(response, 'Department list was updated. Try pagination.', 'depService.refreshDepList.then executed');
                         }, function (response) {
+                            validationResult.name.message = 'idjfiosjfjdiofjds';
                             handleFailCallback(response, 'Department list updating failed.');
                         }
                     );
@@ -206,145 +227,160 @@
             }
         }
 
-    ])
-    ;
-
-
-    departments.controller('MainController', ['$rootScope', function ($rootScope) {
-
-        $rootScope.activeTab = 1;
-
-        this.isDepList = function () {
-            return $rootScope.activeTab == 1;
-        };
-
-        this.isDepForm = function () {
-            return $rootScope.activeTab == 2;
-        }
-
-    }]);
-
-
-    departments.controller('TabController', ['$rootScope', function ($rootScope) {
-
-        this.setTab = function (tabNo) {
-            $rootScope.activeTab = tabNo;
-        };
-
-        this.isSet = function (tabNo) {
-            return tabNo == $rootScope.activeTab;
-        }
-
-    }]);
-
-
-    departments.controller('DepartmentListController', ['$scope', 'depService', 'notificationService', 'pagingService',
-        function ($scope, depService, notificationService, pagingService) {
-
-            $scope.models = {
-                showDepListInJson: false,
-                pageSize: 5
-            };
-
-            $scope.data = {
-                currentPageNo: 1,
-                rawData: depService.getDepList,
-                pagedData: depService.getPagedData,
-                currentPage: function () {
-                    return this.pagedData()[this.currentPageNo - 1];
-                }
-            };
-
-            $scope.actions = {
-
-                addFake: function () {
-                    depService.getDepList().push({id: -10, name: 'jopa', location: 'joppa'});
-                    notificationService.notifySuccess('Fake department added');
-                },
-
-                deleteAll: depService.deleteAll,
-
-                deleteOne: function (department) {
-                    depService.deleteOne(department);
-                },
-
-                setCurrentPage: function (page) {
-                    $scope.data.currentPageNo = page.number;
-                }
-
-            };
-
-            $scope.conditions = {
-
-                isEmpty: function () {
-                    return depService.getDepList().length == 0;
-                },
-
-                isCurrentPage: function (page) {
-                    return page.number == $scope.data.currentPageNo;
-                }
-
-            };
-
-            depService.refreshDepList($scope.models.pageSize);
-
-
-        }
     ]);
 
 
-    departments.controller('DepartmentFormController', ['$scope', '$http', 'depService', 'notificationService',
-        function ($scope, $http, depService, notificationService) {
-            $scope.currentDep = {name: '', location: ''};
+    services.service('departmentFormService', function () {
+        var statuses = {add: 'ADD', edit: 'EDIT'},
+            status = statuses.add,
+            currentDepartment;
 
-            $scope.populate = depService.populateWithTestData;
+        return {
 
-            $scope.add = function () {
-                depService.addOne($scope.currentDep);
-            };
+            setEditStatus: function () {
+                status = statuses.edit;
+            },
+            setAddStatus: function () {
+                status = statuses.add;
+            },
 
-            $scope.isEmptyDep = function () {
-                return $scope.currentDep.name == '' &&
-                    $scope.currentDep.location == '';
-            };
+            showAddForm: function () {
+                status = statuses.add;
+            },
+            showEditForm: function () {
+                status = statuses.edit;
+            },
 
-        }
-    ]);
-
-
-    departments.controller('NotificationBarController', ['$scope', 'notificationService',
-        function ($scope, notificationService) {
-            $scope.getMessage = notificationService.getMessage;
-            $scope.isFail = notificationService.isFail;
-            $scope.isSuccess = notificationService.isSuccess;
-            $scope.isWaiting = notificationService.isWaiting;
-
-            $scope.imgPath = function () {
+            getTitle: function () {
                 var result;
-                if ($scope.isFail()) {
-                    result = 'fail.png';
-                } else if ($scope.isSuccess()) {
-                    result = 'success.png';
-                } else if ($scope.isWaiting()) {
-                    result = 'waiting.gif';
+                if (status == statuses.add) {
+                    result = 'Add new department';
+                } else if (status == statuses.edit) {
+                    result = 'Edit department';
                 }
                 return result;
-            };
-        }
-    ]);
+            }
+
+        };
+    });
 
 
-    departments.controller('DeveloperBarController', ['$scope', 'depService',
-        function ($scope, depService) {
-            $scope.show = false;
+    services.service('tabService', function () {
+        var tabs = {depList: 1, depForm: 2, empList: 3, empForm: 4},
+            activeTab = tabs.depList,
+            hideEmpList = true,
+            hideEmpForm = true;
 
-            $scope.data = {
-                rawData: depService.getDepList,
-                pagedData: depService.getPagedData
-            };
+        return {
 
-        }
-    ]);
+            isDepList: function () {
+                return activeTab == tabs.depList;
+            },
+            isDepForm: function () {
+                return activeTab == tabs.depForm;
+            },
+            isEmpList: function () {
+                return activeTab == tabs.empList;
+            },
+            isEmpForm: function () {
+                return activeTab == tabs.empForm;
+            },
+
+            setDepListAsActive: function () {
+                activeTab = tabs.depList;
+            },
+            setDepFormAsActive: function () {
+                activeTab = tabs.depForm;
+            },
+            setEmpListAsActive: function () {
+                activeTab = tabs.empList;
+            },
+            setEmpFormAsActive: function () {
+                activeTab = tabs.empForm;
+            },
+
+            isEmpListHide: function () {
+                return hideEmpList;
+            },
+            isEmpFormHide: function () {
+                return hideEmpForm;
+            },
+
+            hideEmpList: function (value) {
+                hideEmpList = value;
+            },
+            hideEmpForm: function (value) {
+                return value;
+            }
+
+        };
+    });
+
+
+    services.service('validationService', function () {
+
+        /**
+         * Example of validation result:
+         * {isValid: true, view: {field1:{isValid:true/false}, message:'jasdjaso'},...}, server: {field1:{isValid:true/false}, message:'jasdjaso'}, ...} }
+         */
+        var validateField = function (objectToValidate, validationRules, fieldName) {
+            var result = {isValid: true},
+                regexp,
+                fieldValue = objectToValidate[fieldName],
+                validationRule = validationRules[fieldName];
+
+            if (validationRule) {
+                regexp = new RegExp(validationRule.pattern);
+
+                if (!fieldValue.match(regexp)) {
+                    result.message = validationRules[fieldName].message;
+                    result.isValid = false;
+                }
+
+            }
+
+            return result;
+
+        };
+
+        return {
+
+            /**
+             *
+             * @param objectToValidate
+             * @param validationRules object like this { fieldName: {pattern : 'pattern', message : 'message'}, ...}
+             * @param customValidator
+             * @returns {{isValid: boolean}}
+             *
+             *  Example of validation result:
+             * {isValid: true, view: {field1:{isValid:true/false}, message:'jasdjaso'},...}, server: {field1:{isValid:true/false}, message:'jasdjaso'}, ...} }
+             */
+            validate: function (objectToValidate, validationRules, customValidator) {
+
+                var result = {isValid: true};
+
+                if (customValidator) {
+                    //todo
+                }
+
+                for (var field in objectToValidate) {
+                    var validationFieldResult = validateField(objectToValidate, validationRules, field);
+
+                    if (!validationFieldResult.isValid && result.isValid) {
+                        result.isValid = false;
+                    }
+
+                    result[field] = validationFieldResult;
+
+                }
+
+                return result;
+            },
+
+            defaultValidationResult: {isValid: true},
+
+        };
+    });
 
 
 })();

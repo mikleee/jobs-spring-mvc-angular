@@ -1,26 +1,63 @@
-<div class="container" ng-controller="DepartmentFormController">
+<div ng-controller="DepartmentFormController">
 
-    <form novalidate>
+    <div class="inline-container separated-y">
 
-        <div class="row" ng-hide="isEmptyDep()">
-            <span class="info-area">
-                {{currentDep.name}} {{currentDep.location}}
-            </span>
-        </div>
-        <div class="row">
-            <label class="col-md-4" for="depName">NAME</label>
-            <input class="col-md-4" id="depName" type="text" placeholder="enter name" ng-model="currentDep.name"/>
-        </div>
-        <div class="row">
-            <label class="col-md-4" for="depLocation">LOCATION</label>
-            <input class="col-md-4" id="depLocation" type="text" placeholder="enter location"
-                   ng-model="currentDep.location"/>
-        </div>
-        <div class="row">
-            <button class="btn btn-default btn-sm" ng-click="add()">Add</button>
-            <button class="btn btn-default btn-sm" ng-click="populate()">Add random 5</button>
+        <div class="col-2-3">
+
+            <div class="separated-y">
+                <div>
+                    <label for="depName">NAME</label>
+                </div>
+                <div class="inline-container">
+                    <div class="col-2-3">
+                        <input id="depName" type="text" placeholder="enter name"
+                               ng-model="currentDep.name" ng-blur="blur()"
+                               ng-class="{inputInvalid : fieldInvalid('name'), inputDefault : !fieldInvalid('name')}"/>
+                    </div>
+                    <div class="col-10">
+                        <img ng-show="fieldInvalid('name')"
+                             title="{{validationResult().name.message}}"
+                             style="height: 30px"
+                             src="/img/question.png">
+                    </div>
+                </div>
+            </div>
+
+            <div class="separated-y">
+                <div>
+                    <label for="depLocation">LOCATION</label>
+                </div>
+                <div class="inline-container">
+                    <div class="col-2-3">
+                        <input id="depLocation" type="text" placeholder="enter location"
+                               ng-model="currentDep.location"
+                               ng-class="{inputInvalid : fieldInvalid('location'), inputDefault : !fieldInvalid('location')}"/>
+                    </div>
+                    <div class="col-10">
+                        <img ng-show="fieldInvalid('location')"
+                             title="{{validationResult().location.message}}"
+                             style="height: 30px"
+                             src="/img/question.png">
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-    </form>
+
+        <div class="col-1-3">
+            fjiowefjiowefjiowefuwehfuiwehfuiwehfuiwhweui
+        </div>
+
+    </div>
+
+    <div class="separated-y">
+        <button class="btn btn-info" ng-disabled="!validationResult().isValid" ng-click="add()">
+            Add / Update //todo
+        </button>
+        <button class="btn btn-default">
+            Add new
+        </button>
+    </div>
 
 </div>

@@ -32,7 +32,7 @@ public class DepartmentsController extends GenericController {
         List<Department> departments = departmentService.getAll();
 
         for (int i = 0; i < 5; i++) {
-            Integer depId = departments.get(RandomObjectCreator.randomNumber(departments.size())).getId();
+            Integer depId = departments.get(RandomObjectCreator.randomNumber(departments.size() - 1)).getId();
 
             Employee employee = RandomObjectCreator.createRandomObject(new Employee(), null);
             employee.setDepartment(new Department(depId));

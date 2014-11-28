@@ -18,8 +18,9 @@
     <script type="text/javascript" src="${angularPath}"></script>
     <script type="text/javascript" src="${jQueryPath}"></script>
     <script type="text/javascript" src="<c:url value ="${bootstrapJSPath}"/>"></script>
-    <script type="text/javascript" src="<c:url value ="js/departments.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/main.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/directives.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/services.js"/>"></script>
 
     <link href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"
           media="all">
@@ -36,7 +37,7 @@
 <notification-bar></notification-bar>
 
 
-<div class="rounded col-70 text-section-default separated-y" ng-controller="MainController as mainCtrl">
+<div class="rounded col-70 text-section-default separated-y" ng-controller="MainController">
 
 
     <div class="container">
@@ -45,12 +46,12 @@
             <tabs-panel></tabs-panel>
         </div>
 
-        <div class="row separated-y" ng-show="mainCtrl.isDepForm()">
+        <div class="row separated-y" ng-show="conditions.isDepForm()">
             <department-form></department-form>
         </div>
 
 
-        <div class="row separated-y row-60" ng-show="mainCtrl.isDepList()">
+        <div class="row separated-y" ng-show="conditions.isDepList()">
             <department-list></department-list>
         </div>
 

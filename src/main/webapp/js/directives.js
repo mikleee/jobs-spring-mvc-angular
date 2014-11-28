@@ -3,10 +3,10 @@
     var directives = angular.module('directives', []);
 
 
-    directives.directive("actionButtons", function () {
+    directives.directive("depActionButtons", function () {
         return {
             restrict: 'E',
-            templateUrl: 'custom-ng-tags/action-buttons.jsp'
+            templateUrl: 'custom-ng-tags/dep-action-buttons.jsp'
         };
     });
 
