@@ -14,8 +14,8 @@
     var departmentServices = angular.module('departmentServices', ['commonServices']);
 
 
-    departmentServices.service('depService', [ '$http', 'notificationService', 'pagingService', 'validationService', 'tabService', 'departmentFormService',
-        function ($http, notificationService, pagingService, validationService, tabService, departmentFormService) {
+    departmentServices.service('depService', ['$rootScope', '$http', 'notificationService', 'pagingService', 'validationService', 'tabService', 'departmentFormService',
+        function ($rootScope, $http, notificationService, pagingService, validationService, tabService, departmentFormService) {
 
             var pageSize = 0,
                 depList = [],
@@ -48,8 +48,46 @@
                 }
             };
             var _resetDepartment = function (department) {
+                department.id = null;
                 department.name = '';
                 department.location = '';
+            };
+
+            var _isExist = function (department) {
+                for (var j = 0; j < depList.length; j++) {
+                    if (department && depList[j].id == department.id) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            var _doAfterAddLogic = function (response, department) {
+                if (response.data.status == 'validation-error') {
+                    serverMessages = response.data.serverMessages;
+                } else {
+                    var notificationMessage = angular.toJson(department) + ' department was ' + (departmentFormService.isAddStatus() ? 'added' : 'updated');
+                    handleSuccessCallback(response, notificationMessage, 'depService.addOne.then executed');
+                    departmentFormService.clearFixedDepartment();
+                    if (departmentFormService.isEditStatus()) {
+                        departmentFormService.setAddStatus();
+                        tabService.setDepListAsActive();
+                    }
+                    $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+                }
+            };
+            var _doAfterDeleteOneLogic = function (response, department) {
+                handleSuccessCallback(response, angular.toJson(department) + ' department was deleted.', 'depService.addOne.then executed');
+                if (!_isExist(departmentFormService.getFixedDepartment())) {
+                    departmentFormService.clearFixedDepartment();
+                    departmentFormService.setAddStatus();
+                    $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+                }
+            };
+            var _doAfterDeleteAllLogic = function () {
+                handleSuccessCallback({data: []}, 'All departments were deleted.', 'depService.deleteAll.then executed');
+                departmentFormService.clearFixedDepartment();
+                departmentFormService.setAddStatus();
+                $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
             };
 
 
@@ -58,7 +96,6 @@
                 getDepList: function () {
                     return depList;
                 },
-
                 setDepList: function (response) {
                     depList = response.data;
                 },
@@ -66,32 +103,26 @@
                 getPagedData: function () {
                     return pagedDepList;
                 },
-
                 setPageSize: function (newPageSize) {
                     pageSize = newPageSize;
                 },
-
                 repaginate: function (newPageSize) {
                     pageSize = newPageSize;
                     pagedDepList = pagingService.paginate(depList, pageSize);
                 },
 
                 validate: function (department) {
-
                     if (department.name != '' || department.location != '') {
                         validationResult = validationService.validate(department, validationRules, serverMessages);
                         notifyValidation(validationResult);
                     } else {
                         validationResult = {isValid: false, name: {isValid: true}, location: {isValid: true}};
                     }
-
                     return validationResult;
                 },
-
                 getValidationResult: function () {
                     return validationResult;
                 },
-
                 clearServerMessages: function () {
                     serverMessages = {};
                 },
@@ -112,7 +143,6 @@
                     );
 
                 },
-
                 populateWithTestData: function (result) {
                     notificationService.notifyWaiting('Populating department list with test data...');
                     $http.post('/populate').then(
@@ -123,44 +153,31 @@
                         }
                     );
                 },
-
                 deleteAll: function (result) {
                     notificationService.notifyWaiting('Clearing department list...');
                     $http.post('/deleteAllDepartments').then(
                         function (response) {
-                            handleSuccessCallback({data: []}, 'All departments were deleted.', 'depService.deleteAll.then executed');
+                            _doAfterDeleteAllLogic();
                         }, function (response) {
                             handleFailCallback(response, 'Deleting all departments failed.');
                         }
                     );
                 },
-
                 addOne: function (department) {
                     notificationService.notifyWaiting('Adding ' + angular.toJson(department) + ' department...');
                     $http.post('/persistDepartment', department).then(
                         function (response) {
-
-                            if (response.data.status == 'validation-error') {
-                                serverMessages = response.data.serverMessages;
-                            } else {
-                                var notificationMessage = angular.toJson(department) + ' department was ' + (departmentFormService.isAddStatus() ? 'added' : 'updated');
-                                handleSuccessCallback(response, notificationMessage, 'depService.addOne.then executed');
-                                _resetDepartment(department);
-                                tabService.setDepListAsActive();
-                                departmentFormService.setAddStatus();
-                            }
-
+                            _doAfterAddLogic(response, department);
                         }, function (response) {
                             handleFailCallback(response, department.name + ' department adding failed.');
                         }
                     );
                 },
-
                 deleteOne: function (department) {
                     notificationService.notifyWaiting('Deleting ' + angular.toJson(department) + ' department...');
                     $http.post('/depDelete', department).then(
                         function (response) {
-                            handleSuccessCallback(response, angular.toJson(department) + ' department was deleted.', 'depService.addOne.then executed');
+                            _doAfterDeleteOneLogic(response, department);
                         }, function (response) {
                             handleFailCallback(response, department + ' department deleting failed.');
                         }
@@ -173,34 +190,40 @@
     ]);
 
 
-    departmentServices.service('departmentFormService', function () {
-        var statuses = {add: 'ADD', edit: 'EDIT'},
-            status = statuses.add,
-            fixedDepartment;
+    departmentServices.service('departmentFormService', [
+        function () {
+            var statuses = {add: 'ADD', edit: 'EDIT'},
+                status = statuses.add,
+                fixedDepartment = {};
 
-        return {
+            return {
 
-            isEditStatus: function () {
-                return status == statuses.edit;
-            },
-            isAddStatus: function () {
-                return status == statuses.add;
-            },
+                isEditStatus: function () {
+                    return status == statuses.edit;
+                },
+                isAddStatus: function () {
+                    return status == statuses.add;
+                },
 
-            setAddStatus: function () {
-                status = statuses.add;
-            },
-            setEditStatus: function (department) {
-                fixedDepartment = department;
-                status = statuses.edit;
-            },
+                setAddStatus: function () {
+                    status = statuses.add;
+                },
+                setEditStatus: function (department) {
+                    fixedDepartment = department;
+                    status = statuses.edit;
+                },
 
-            getFixedDepartment: function () {
-                return angular.copy(fixedDepartment);
-            }
+                getFixedDepartment: function () {
+                    return angular.copy(fixedDepartment);
+                },
+                clearFixedDepartment: function () {
+                    fixedDepartment.id = null;
+                    fixedDepartment.name = '';
+                    fixedDepartment.location = '';
+                }
 
-        };
-    });
+            };
+        }]);
 
 
 })();

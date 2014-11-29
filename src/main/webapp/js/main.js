@@ -56,12 +56,11 @@
                 deleteAll: function () {
                     $scope.data.currentPageNo = 1;
                     depService.deleteAll();
-                    $rootScope.$broadcast('CLEAR_DEP_FORM_MODEL');
                 },
                 showEditForm: function (department) {
                     tabService.setDepFormAsActive();
                     departmentFormService.setEditStatus(department);
-                    $rootScope.$broadcast('CHANGE_DEP_FORM_MODEL');
+                    $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
                 },
                 showAddForm: function () {
                     tabService.setDepFormAsActive();
@@ -105,15 +104,10 @@
     departments.controller('DepartmentFormController', ['$scope', 'depService', 'departmentFormService',
         function ($scope, depService, departmentFormService) {
 
-            $scope.$on('CHANGE_DEP_FORM_MODEL', function () {
+            $scope.$on('CHECK_DEP_FORM_MODEL', function () {
                 $scope.currentDep = departmentFormService.getFixedDepartment();
             });
-            //todo check in repo
-            $scope.$on('CLEAR_DEP_FORM_MODEL', function () {
-                if ($scope.conditions.isEdit()) {
-                    depService.resetDepartment($scope.currentDep);
-                }
-            });
+
             $scope.$watch('currentDep.name', function (oldV, newV) {
                 depService.clearServerMessages();
             });
