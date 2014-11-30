@@ -9,7 +9,7 @@
             </a>
         </li>
         <li ng-hide="conditions.noEmployees(dep);">
-            <a class="text-sm" href="#">
+            <a class="text-sm" href="#" ng-click="actions.showEmpList(dep);">
                 Employee list
             </a>
         </li>

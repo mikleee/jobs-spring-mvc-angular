@@ -24,7 +24,6 @@ public class DepartmentDAOImpl extends DepartmentDAO {
         }
     }
 
-
     @Override
     public Department selectByUniqueIdentifier(String uniqueIdentifier) throws DataSourceException {
         try {

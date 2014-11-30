@@ -27,23 +27,13 @@ public class EmployeeController extends GenericController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 
-
-    /**
-     * Shows list of employees in the department
-     */
-    @RequestMapping(value = "/depEmpList", method = RequestMethod.GET)
+    @RequestMapping(value = "/empList", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> showEmployeeList(@RequestParam(required = false) Integer depId) throws EvilUserDetectedException, DataSourceException {
-        Map<String, Object> result = new HashMap<>();
-        result.put("department", departmentService.getOne(depId));
-        result.put("employees", employeeService.getAllInDepartment(depId));
-        return result;
+    public List<Employee> showEmployeeList(Integer depId) throws EvilUserDetectedException, DataSourceException {
+        logger.trace("/empList " + depId + " request");
+        return employeeService.getAllInDepartment(depId);
     }
 
-
-    /**
-     * Deletes employee and redirects request to show list of employees in the department
-     */
     @RequestMapping(value = "/empDelete", method = RequestMethod.POST)
     @ResponseBody
     public Integer deleteEmployee(@RequestParam(required = false) Integer empId) throws DataSourceException, EvilUserDetectedException {
@@ -51,11 +41,6 @@ public class EmployeeController extends GenericController {
         return empId;
     }
 
-
-    /**
-     * Shows "employee for edit" form, where text fields are filled by corresponding fields of employee for
-     * add or edit
-     */
     @RequestMapping(value = "/empAddOrUpdate.html", method = RequestMethod.GET)
     public ModelAndView showAddEmployeeForm(@RequestParam(required = false) Integer depId,
                                             @RequestParam(required = false) Integer empId, ModelMap map) throws EvilUserDetectedException, DataSourceException {
@@ -69,14 +54,10 @@ public class EmployeeController extends GenericController {
         return new ModelAndView("AddOrUpdateEmployee", map);
     }
 
-
-    /**
-     * Executes employee adding or updating and redirects request to show list of employees in the department
-     */
     @RequestMapping(value = "/doEmpAddOrUpdate", method = RequestMethod.POST)
     @ResponseBody
     public Employee addOrUpdateEmployee(@ModelAttribute Employee employee,
-                                            @RequestParam Integer departmentId) throws DataSourceException, ValidationException, EvilUserDetectedException {
+                                        @RequestParam Integer departmentId) throws DataSourceException, ValidationException, EvilUserDetectedException {
         employee.setDepartment(new Department(departmentId));
         if (employee.getId() == null) {
             employeeService.add(employee);

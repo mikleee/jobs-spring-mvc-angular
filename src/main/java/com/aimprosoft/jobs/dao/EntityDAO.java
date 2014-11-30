@@ -2,9 +2,12 @@ package com.aimprosoft.jobs.dao;
 
 import com.aimprosoft.jobs.model.PersistEntity;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
 
 /**
  * Created on 12/23/13.
@@ -38,6 +41,15 @@ public abstract class EntityDAO<T extends PersistEntity> implements BasicDAO<T> 
             sessionFactory.getCurrentSession().merge(entity);
         } catch (HibernateException e) {
             throw new DataSourceException();
+        }
+    }
+
+    public void evictCollection(Collection collection) throws DataSourceException {
+        Session session = sessionFactory.getCurrentSession();
+        for (Object item : collection) {
+            if (session.contains(item)) {
+                session.evict(item);
+            }
         }
     }
 

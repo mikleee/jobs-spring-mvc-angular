@@ -1,8 +1,26 @@
 <ul class="nav nav-tabs" ng-controller="TabController">
+
     <li role="presentation" ng-class="{ active : conditions.isDepList() }" ng-click="actions.setDepListAsActive()">
         <a href="#">Departments</a>
     </li>
+
     <li role="presentation" ng-class="{ active : conditions.isDepForm() }" ng-click="actions.setDepFormAsActive()">
         <a href="#">{{tcConditions.isAddDepStatus() ? 'Add new department' : 'Edit department'}}</a>
+    </li>
+
+    <li role="presentation" ng-class="{ active : conditions.isEmpList() }" ng-click="actions.setEmpListAsActive()"
+        ng-hide="tcConditions.isEmpListHide()">
+        <a href="#">
+            Employee list
+            <img class="closeIcon" src="/img/delete.png" title="close"
+                 ng-click="actions.hideEmpList(); $event.stopPropagation();"/>
+        </a>
+    </li>
+
+    <li role="presentation" ng-class="{ active : conditions.isEmpForm() }" ng-click="actions.setEmpFormAsActive()"
+        ng-hide="tcConditions.isEmpFormHide()">
+        <a href="#">{{tcConditions.isAddEmpStatus() ? 'Add new employee' : 'Edit employee'}}</a>
+        <img class="closeIcon" src="/img/delete.png" title="close"
+             ng-click="actions.hideEmpForm(); $event.stopPropagation();"/>
     </li>
 </ul>

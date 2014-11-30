@@ -18,9 +18,11 @@
     <script type="text/javascript" src="${angularPath}"></script>
     <script type="text/javascript" src="${jQueryPath}"></script>
     <script type="text/javascript" src="<c:url value ="${bootstrapJSPath}"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/models.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/main.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/directives.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/departmentServices.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/employeeServices.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/commonServices.js"/>"></script>
 
     <link href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"
@@ -56,12 +58,12 @@
             <department-list></department-list>
         </div>
 
-        <div>
-            <developer-bar></developer-bar>
-        </div>
-
     </div>
 
+</div>
+
+<div>
+    <developer-bar></developer-bar>
 </div>
 
 

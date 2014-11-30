@@ -87,6 +87,7 @@
                 handleSuccessCallback({data: []}, 'All departments were deleted.', 'depService.deleteAll.then executed');
                 departmentFormService.clearFixedDepartment();
                 departmentFormService.setAddStatus();
+                tabService.setDepListAsActive(); //todo logic now works but shit
                 $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
             };
 
@@ -190,11 +191,17 @@
     ]);
 
 
-    departmentServices.service('departmentFormService', [
-        function () {
+    departmentServices.service('departmentFormService', ['$rootScope', 'tabService',
+        function ($rootScope, tabService) {
             var statuses = {add: 'ADD', edit: 'EDIT'},
                 status = statuses.add,
                 fixedDepartment = {};
+
+            var _clearFixedDepartment = function () {
+                fixedDepartment.id = null;
+                fixedDepartment.name = '';
+                fixedDepartment.location = '';
+            };
 
             return {
 
@@ -207,20 +214,21 @@
 
                 setAddStatus: function () {
                     status = statuses.add;
+                    _clearFixedDepartment();
+                    $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+                    tabService.setDepFormAsActive();
                 },
                 setEditStatus: function (department) {
-                    fixedDepartment = department;
+                    fixedDepartment = angular.copy(department);
                     status = statuses.edit;
+                    $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+                    tabService.setDepFormAsActive();
                 },
 
                 getFixedDepartment: function () {
                     return angular.copy(fixedDepartment);
                 },
-                clearFixedDepartment: function () {
-                    fixedDepartment.id = null;
-                    fixedDepartment.name = '';
-                    fixedDepartment.location = '';
-                }
+                clearFixedDepartment: _clearFixedDepartment
 
             };
         }]);

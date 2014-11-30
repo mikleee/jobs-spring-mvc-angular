@@ -1,7 +1,6 @@
 (function () {
 
-
-    var departments = angular.module('departments', ['directives', 'departmentServices']);
+    var departments = angular.module('departments', ['directives', 'departmentServices', 'employeeServices']);
 
 
     departments.controller('MainController', ['$scope', 'tabService', function ($scope, tabService) {
@@ -23,19 +22,22 @@
                 setDepListAsActive: tabService.setDepListAsActive,
                 setDepFormAsActive: tabService.setDepFormAsActive,
                 setEmpListAsActive: tabService.setEmpListAsActive,
-                setEmpFormAsActive: tabService.setEmpFormAsActive
+                setEmpFormAsActive: tabService.setEmpFormAsActive,
+                hideEmpList: tabService.hideEmpList,
+                hideEmpForm: tabService.hideEmpForm
             };
 
             $scope.tcConditions = {
-                isAddDepStatus: departmentFormService.isAddStatus
+                isAddDepStatus: departmentFormService.isAddStatus,
+                isEmpListHide: tabService.isEmpListHide,
+                isEmpFormHide: tabService.isEmpFormHide
             };
-
 
         }]);
 
 
-    departments.controller('DepartmentListController', ['$scope', '$rootScope', 'depService', 'departmentFormService', 'tabService',
-        function ($scope, $rootScope, depService, departmentFormService, tabService) {
+    departments.controller('DepartmentListController', ['$scope', '$rootScope', 'depService', 'departmentFormService', 'tabService', 'empService',
+        function ($scope, $rootScope, depService, departmentFormService, tabService, empService) {
 
             $scope.models = {
                 pageSize: 5,
@@ -57,15 +59,13 @@
                     $scope.data.currentPageNo = 1;
                     depService.deleteAll();
                 },
+                showEmpList: function (department) {
+                    empService.refreshEmpList(department, $scope.models.pageSize);
+                },
                 showEditForm: function (department) {
-                    tabService.setDepFormAsActive();
                     departmentFormService.setEditStatus(department);
-                    $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
                 },
-                showAddForm: function () {
-                    tabService.setDepFormAsActive();
-                    departmentFormService.showAddForm()
-                },
+                showAddForm: departmentFormService.setAddStatus,
                 deleteOne: function (department) {
                     depService.deleteOne(department);
                     $scope.data.currentPageNo = 1;
@@ -176,13 +176,15 @@
     ]);
 
 
-    departments.controller('DeveloperBarController', ['$scope', 'depService',
-        function ($scope, depService) {
+    departments.controller('DeveloperBarController', ['$scope', 'depService', 'empService',
+        function ($scope, depService, empService) {
             $scope.show = false;
 
             $scope.data = {
-                rawData: depService.getDepList,
-                pagedData: depService.getPagedData
+                depRawData: depService.getDepList,
+                depPagedData: depService.getPagedData,
+                empRawData: empService.getEmpList,
+                empPagedData: empService.getPagedData
             };
 
             $scope.validationReport = {

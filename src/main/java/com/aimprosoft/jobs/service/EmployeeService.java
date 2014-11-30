@@ -19,9 +19,6 @@ public abstract class EmployeeService extends EntityService<Employee> {
     protected static final String REMOVE_EMP_ERROR = "DATA SOURCE ERROR (remove employee failed)";
     protected static final String UPDATE_EMP_ERROR = "DATA SOURCE ERROR (update employee failed)";
 
-    @Autowired
-    protected EmployeeDAO employeeDAO;
-
     public abstract List<Employee> getAllInDepartment(Integer id) throws DataSourceException, EvilUserDetectedException;
 
 

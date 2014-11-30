@@ -18,6 +18,7 @@
         function ($rootScope, $http, notificationService, pagingService, validationService, tabService, employeeFormService) {
 
             var pageSize = 0,
+                currentDepartment,
                 empList = [],
                 pagedEmpList = [],
                 validationResult,
@@ -84,12 +85,6 @@
                     $rootScope.$broadcast('CHECK_EMP_FORM_MODEL');
                 }
             };
-            var _doAfterDeleteAllLogic = function () {
-                handleSuccessCallback({data: []}, 'All employees were deleted.', 'empService.deleteAll.then executed');
-                employeeFormService.clearFixedEmployee();
-                employeeFormService.setAddStatus();
-                $rootScope.$broadcast('CHECK_EMP_FORM_MODEL');
-            };
 
 
             return {
@@ -133,27 +128,18 @@
                     _resetemployee(employee);
                 },
 
-                refreshEmpList: function (pageSize) {
+                refreshEmpList: function (department, pageSize) {
                     this.setPageSize(pageSize);
-                    notificationService.notifyWaiting('Fetching employee list (page size = ' + pageSize + ')...');
-                    $http.get('/empList').then(
+                    notificationService.notifyWaiting('Fetching employee list for: ' + angular.toJson(department) + '...');
+                    $http.get('/empList?depId=' + department.id).then(
                         function (response) {
-                            handleSuccessCallback(response, 'employee list was updated. Try pagination.', 'depService.refreshEmpList.then executed');
+                            handleSuccessCallback(response, 'employee list was updated.', 'empService.refreshEmpList.then executed');
+                            currentDepartment = department;
                         }, function (response) {
                             handleFailCallback(response, 'employee list updating failed.');
                         }
                     );
 
-                },
-                populateWithTestData: function (result) {
-                    notificationService.notifyWaiting('Populating employee list with test data...');
-                    $http.post('/populate').then(
-                        function (response) {
-                            handleSuccessCallback(response, 'employee list was populated with test data', 'depService.populateWithTestData.then executed');
-                        }, function (response) {
-                            handleFailCallback(response, 'Populating employee list with test data failed.');
-                        }
-                    );
                 },
                 deleteAll: function (result) {
                     notificationService.notifyWaiting('Clearing employee list...');
@@ -216,12 +202,12 @@
                 },
 
                 getFixedEmployee: function () {
-                    return angular.copy(fixedemployee);
+                    return angular.copy(fixedEmployee);
                 },
                 clearFixedEmployee: function () {
-                    fixedemployee.id = null;
-                    fixedemployee.name = '';
-                    fixedemployee.location = '';
+                    fixedEmployee.id = null;
+                    fixedEmployee.name = '';
+                    fixedEmployee.location = '';
                 }
 
             };

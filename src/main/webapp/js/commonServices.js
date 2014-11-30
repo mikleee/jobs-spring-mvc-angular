@@ -113,11 +113,17 @@
                 return hideEmpForm;
             },
 
-            hideEmpList: function (value) {
-                hideEmpList = value;
+            hideEmpList: function () {
+                hideEmpList = true;
+                if (activeTab == tabs.empList) {
+                    activeTab = tabs.depList;
+                }
             },
-            hideEmpForm: function (value) {
-                return value;
+            hideEmpForm: function () {
+                hideEmpForm = true;
+                if (activeTab == tabs.empForm) {
+                    activeTab = tabs.depList;
+                }
             }
 
         };
@@ -155,9 +161,7 @@
 
             return {
 
-
                 validate: function (objectToValidate, validationRules, serverMessages) {
-
                     var result = {isValid: true};
 
                     for (var field in objectToValidate) {

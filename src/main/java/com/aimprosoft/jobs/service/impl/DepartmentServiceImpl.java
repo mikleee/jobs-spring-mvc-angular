@@ -3,8 +3,10 @@ package com.aimprosoft.jobs.service.impl;
 import com.aimprosoft.jobs.controller.EvilUserDetectedException;
 import com.aimprosoft.jobs.dao.DataSourceException;
 import com.aimprosoft.jobs.model.impl.Department;
+import com.aimprosoft.jobs.model.impl.Employee;
 import com.aimprosoft.jobs.service.DepartmentService;
 import com.aimprosoft.jobs.service.ValidationException;
+import com.aimprosoft.jobs.util.RandomObjectCreator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,6 +31,26 @@ public class DepartmentServiceImpl extends DepartmentService {
         for (Department department : departmentDAO.getAll()) {
             departmentDAO.delete(department.getId());
         }
+    }
+
+    @Override
+    public List<Department> populate(int depCount, int empCount) throws DataSourceException {
+
+        for (int i = 0; i < depCount; i++) {
+            departmentDAO.add(RandomObjectCreator.createRandomObject(new Department(), null));
+        }
+
+        List<Department> departments = departmentDAO.getAll();
+        departmentDAO.evictCollection(departments);
+
+        for (int i = 0; i < empCount; i++) {
+            Integer depId = departments.get(RandomObjectCreator.randomNumber(departments.size() - 1)).getId();
+            Employee employee = RandomObjectCreator.createRandomObject(new Employee(), null);
+            employee.setDepartment(new Department(depId));
+            employeeDAO.add(employee);
+        }
+
+        return departmentDAO.getAll();
     }
 
     @Override

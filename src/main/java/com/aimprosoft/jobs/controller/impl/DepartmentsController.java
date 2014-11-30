@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Controller
@@ -26,28 +24,7 @@ public class DepartmentsController extends GenericController {
     @ResponseBody
     public List<Department> populate() throws DataSourceException, ValidationException {
         logger.trace("/populate request");
-
-        for (int i = 0; i < 5; i++) {
-            departmentService.add(RandomObjectCreator.createRandomObject(new Department(), null));
-        }
-
-        List<Department> departments = departmentService.getAll();
-
-        for (int i = 0; i < 5; i++) {
-            Integer depId = departments.get(RandomObjectCreator.randomNumber(departments.size() - 1)).getId();
-
-            Employee employee = RandomObjectCreator.createRandomObject(new Employee(), null);
-            employee.setDepartment(new Department(depId));
-
-            try {
-                employeeService.add(employee);
-            } catch (Throwable t) {
-                logger.debug(employee + " adding failed, reason : " + t.getCause().getMessage());
-            }
-
-        }
-
-        return departmentService.getAll();
+        return departmentService.populate(5, 15);
     }
 
     @RequestMapping(value = "/depList", method = RequestMethod.GET, produces = "application/json")
@@ -90,6 +67,7 @@ public class DepartmentsController extends GenericController {
     @ResponseBody
     public List<Department> addOrUpdateDepartment(@RequestBody Department department, HttpServletRequest request) throws DataSourceException, EvilUserDetectedException, ValidationException {
         logger.trace("/persistDepartment request");
+        department.setEmployeeList(new ArrayList<Employee>());
 
         if (department.getId() == null) {
             departmentService.add(department);
