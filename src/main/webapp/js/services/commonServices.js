@@ -101,9 +101,11 @@
             },
             setEmpListAsActive: function () {
                 activeTab = tabs.empList;
+                hideEmpList = false;
             },
             setEmpFormAsActive: function () {
                 activeTab = tabs.empForm;
+                hideEmpForm = false;
             },
 
             isEmpListHide: function () {

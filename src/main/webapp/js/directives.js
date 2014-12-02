@@ -6,7 +6,7 @@
     directives.directive("depActionButtons", function () {
         return {
             restrict: 'E',
-            templateUrl: 'custom-ng-tags/dep-action-buttons.jsp'
+            templateUrl: 'custom-ng-tags/department/dep-action-buttons.jsp'
         };
     });
 
@@ -14,7 +14,7 @@
     directives.directive("departmentForm", function () {
         return {
             restrict: 'E',
-            templateUrl: 'custom-ng-tags/department-form.jsp'
+            templateUrl: 'custom-ng-tags/department/department-form.jsp'
         };
     });
 
@@ -22,7 +22,22 @@
     directives.directive("departmentList", function () {
         return {
             restrict: 'E',
-            templateUrl: 'custom-ng-tags/department-list.jsp'
+            templateUrl: 'custom-ng-tags/department/department-list.jsp'
+        };
+    });
+
+
+    directives.directive("employeeList", function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'custom-ng-tags/employee/employee-list.jsp'
+        };
+    });
+
+    directives.directive("empActionButtons", function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'custom-ng-tags/employee/emp-action-buttons.jsp'
         };
     });
 

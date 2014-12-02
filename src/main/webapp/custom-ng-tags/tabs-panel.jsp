@@ -12,15 +12,16 @@
         ng-hide="tcConditions.isEmpListHide()">
         <a href="#">
             Employee list
-            <img class="closeIcon" src="/img/delete.png" title="close"
-                 ng-click="actions.hideEmpList(); $event.stopPropagation();"/>
+            <span class="closeIcon glyphicon glyphicon-remove" title="close" aria-hidden="true"
+                  ng-click="actions.hideEmpList(); $event.stopPropagation();"></span>
         </a>
     </li>
 
     <li role="presentation" ng-class="{ active : conditions.isEmpForm() }" ng-click="actions.setEmpFormAsActive()"
         ng-hide="tcConditions.isEmpFormHide()">
-        <a href="#">{{tcConditions.isAddEmpStatus() ? 'Add new employee' : 'Edit employee'}}</a>
-        <img class="closeIcon" src="/img/delete.png" title="close"
-             ng-click="actions.hideEmpForm(); $event.stopPropagation();"/>
+        <a href="#">{{tcConditions.isAddEmpStatus() ? 'Add new employee' : 'Edit employee'}}
+         <span class="closeIcon glyphicon glyphicon-remove" title="close" aria-hidden="true"
+               ng-click="actions.hideEmpForm(); $event.stopPropagation();"></span>
+        </a>
     </li>
 </ul>

@@ -21,9 +21,9 @@
     <script type="text/javascript" src="<c:url value ="js/models.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/main.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/directives.js"/>"></script>
-    <script type="text/javascript" src="<c:url value ="js/departmentServices.js"/>"></script>
-    <script type="text/javascript" src="<c:url value ="js/employeeServices.js"/>"></script>
-    <script type="text/javascript" src="<c:url value ="js/commonServices.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/services/departmentServices.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/services/employeeServices.js"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/services/commonServices.js"/>"></script>
 
     <link href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"
           media="all">
@@ -56,6 +56,11 @@
 
         <div class="row separated-y" ng-show="conditions.isDepList()">
             <department-list></department-list>
+        </div>
+
+
+        <div class="row separated-y" ng-show="conditions.isEmpList()">
+            <employee-list></employee-list>
         </div>
 
     </div>

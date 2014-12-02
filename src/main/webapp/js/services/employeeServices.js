@@ -135,6 +135,7 @@
                         function (response) {
                             handleSuccessCallback(response, 'employee list was updated.', 'empService.refreshEmpList.then executed');
                             currentDepartment = department;
+                            tabService.setEmpListAsActive();
                         }, function (response) {
                             handleFailCallback(response, 'employee list updating failed.');
                         }

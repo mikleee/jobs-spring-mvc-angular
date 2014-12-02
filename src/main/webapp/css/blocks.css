@@ -3,8 +3,16 @@
     margin-left: auto;
 }
 
+.col-05 {
+    width: 5%;
+}
+
 .col-10 {
     width: 10%;
+}
+
+.col-15 {
+    width: 15%;
 }
 
 .col-30 {
