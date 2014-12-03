@@ -37,7 +37,7 @@ td, th {
     background-color: rgba(0, 213, 255, 0.03);
     border: 1px solid rgba(137, 225, 244, 0.5);
     padding: 4px;
-    color: rgba(0, 113, 149, 0.95);
+    /*color: rgba(0, 113, 149, 0.95);*/
     border-radius: 5px;
     vertical-align: super;
     margin-top: 1px;

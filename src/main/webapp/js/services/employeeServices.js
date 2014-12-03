@@ -86,6 +86,15 @@
                 }
             };
 
+            var _doAfterDeleteAllLogic = function () {
+                handleSuccessCallback({data: []}, 'All Employees were deleted.', 'empService.deleteAll.then executed');
+                currentDepartment.emp //todo
+//                departmentFormService.clearFixedDepartment();
+//                departmentFormService.setAddStatus();
+                tabService.setDepListAsActive(); //todo logic now works but shit
+//                $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+            };
+
 
             return {
 
@@ -144,7 +153,7 @@
                 },
                 deleteAll: function (result) {
                     notificationService.notifyWaiting('Clearing employee list...');
-                    $http.post('/deleteAllemployees').then(
+                    $http.post('/deleteAllEmployees', currentDepartment).then(
                         function (response) {
                             _doAfterDeleteAllLogic();
                         }, function (response) {
