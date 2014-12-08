@@ -18,6 +18,7 @@
     <script type="text/javascript" src="${angularPath}"></script>
     <script type="text/javascript" src="${jQueryPath}"></script>
     <script type="text/javascript" src="<c:url value ="${bootstrapJSPath}"/>"></script>
+    <script type="text/javascript" src="<c:url value ="js/utils.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/models.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/main.js"/>"></script>
     <script type="text/javascript" src="<c:url value ="js/directives.js"/>"></script>

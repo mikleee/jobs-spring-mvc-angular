@@ -23,7 +23,7 @@
         <td class="col-1-5">{{emp.name}}</td>
         <td class="col-1-5">{{emp.salary}}</td>
         <td class="col-1-5">{{emp.email}}</td>
-        <td class="col-1-5">{{emp.birth}}</td>
+        <td class="col-1-5">{{emp.birth | date : "dd/MM/yyyy"}}</td>
         <td class="col-15">
             <emp-action-buttons></emp-action-buttons>
         </td>

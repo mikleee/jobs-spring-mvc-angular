@@ -2,7 +2,6 @@
 
     var departments = angular.module('departments', ['directives', 'departmentServices', 'employeeServices']);
 
-
     departments.controller('MainController', ['$scope', 'tabService', function ($scope, tabService) {
 
         $scope.conditions = {
@@ -36,8 +35,8 @@
         }]);
 
 
-    departments.controller('DepartmentListController', ['$scope', '$rootScope', 'depService', 'departmentFormService', 'tabService', 'empService',
-        function ($scope, $rootScope, depService, departmentFormService, tabService, empService) {
+    departments.controller('DepartmentListController', ['$scope', '$rootScope', 'depService', 'departmentFormService', 'tabService', 'pagingService', 'empService',
+        function ($scope, $rootScope, depService, departmentFormService, tabService, pagingService, empService) {
 
             $scope.models = {
                 pageSize: 5,
@@ -45,36 +44,33 @@
             };
 
             $scope.data = {
-                currentPageNo: 1,
                 rawData: depService.getDepList,
                 pagedData: depService.getPagedData,
                 currentPage: function () {
-                    return this.pagedData()[this.currentPageNo - 1];
+                    return this.pagedData()[depService.getCurrentPageNo() - 1];
                 }
             };
 
             $scope.actions = {
                 populate: depService.populateWithTestData,
-                deleteAll: function () {
-                    $scope.data.currentPageNo = 1;
-                    depService.deleteAll();
-                },
+                deleteAll: depService.deleteAll,
                 showEmpList: function (department) {
                     empService.refreshEmpList(department, $scope.models.pageSize);
                 },
                 showEditForm: function (department) {
                     departmentFormService.setEditStatus(department);
                 },
-                showAddForm: departmentFormService.setAddStatus,
+                showAddForm: function () {
+                    departmentFormService.setAddStatus();
+                    tabService.setDepFormAsActive();
+                },
                 deleteOne: function (department) {
                     depService.deleteOne(department);
-                    $scope.data.currentPageNo = 1;
                 },
                 setCurrentPage: function (page) {
-                    $scope.data.currentPageNo = page.number;
+                    depService.setCurrentPageNo(page.number);
                 },
                 setPageSize: function (pageSize) {
-                    $scope.data.currentPageNo = 1;
                     $scope.models.pageSize = pageSize;
                     depService.repaginate(pageSize);
                 }
@@ -88,7 +84,7 @@
                     return department.employeeList.length == 0;
                 },
                 isCurrentPage: function (page) {
-                    return page.number == $scope.data.currentPageNo;
+                    return page.number == depService.getCurrentPageNo();
                 },
                 isCurrentPageSize: function (pageSize) {
                     return pageSize == $scope.models.pageSize;
@@ -112,11 +108,11 @@
                 depService.clearServerMessages();
             });
 
-            $scope.currentDep = {name: '', location: ''};
+            $scope.currentDep = Utils.createEmptyModel(['name', 'location']);
 
             $scope.conditions = {
                 isEmptyDep: function () {
-                    return $scope.currentDep.name == '' && $scope.currentDep.location == '';
+                    return Utils.isModelEmpty($scope.currentDep);
                 },
                 isEdit: departmentFormService.isEditStatus,
                 isAdd: departmentFormService.isAddStatus
@@ -127,7 +123,7 @@
                     depService.addOne($scope.currentDep);
                 },
                 setAddStatus: function () {
-                    depService.resetDepartment($scope.currentDep);
+                    Utils.clearModel($scope.currentDep);
                     departmentFormService.setAddStatus();
                 }
             };
@@ -180,8 +176,8 @@
                     departmentFormService.setEditStatus(department);
                 },
                 showAddForm: departmentFormService.setAddStatus,
-                deleteOne: function (department) {
-                    depService.deleteOne(department);
+                deleteOne: function (employee) {
+                    empService.deleteOne(employee);
                     $scope.data.currentPageNo = 1;
                 },
                 setCurrentPage: function (page) {
@@ -208,6 +204,59 @@
 
 
         }
+    ]);
+
+
+    departments.controller('EmployeeFormController', ['$scope', 'empService', 'employeeFormService',
+        function ($scope, empService, employeeFormService) {
+
+            $scope.$on('CHECK_EMP_FORM_MODEL', function () {
+                $scope.currentEmp = employeeFormService.getFixedEmployee();
+            });
+
+            $scope.$watch('currentEmp.email', function (oldV, newV) {
+                empService.clearServerMessages();
+            });
+
+            $scope.currentEmp = {name: '', location: ''};
+
+            $scope.conditions = {
+                isEmptyDep: function () {
+                    return $scope.currentDep.name == '' && $scope.currentDep.location == '';
+                },
+                isEdit: departmentFormService.isEditStatus,
+                isAdd: departmentFormService.isAddStatus
+            };
+
+            $scope.actions = {
+                add: function () {
+                    depService.addOne($scope.currentDep);
+                },
+                setAddStatus: function () {
+                    depService.resetDepartment($scope.currentDep);
+                    departmentFormService.setAddStatus();
+                }
+            };
+
+            $scope.validationResult = function () {
+                return depService.validate($scope.currentDep);
+            };
+
+            $scope.fieldInvalid = function (fieldName) {
+                var isDirty = !$scope.conditions.isEmptyDep(),
+                    validationResult = $scope.validationResult();
+                return !validationResult[fieldName].isValid && isDirty;
+            };
+
+            $scope.validationMessage = function (fieldName) {
+                var validationResult = $scope.validationResult();
+                return validationResult[fieldName].message;
+            };
+
+            $scope.getDepartmentForEdit = departmentFormService.getFixedDepartment;
+
+        }
+
     ]);
 
 

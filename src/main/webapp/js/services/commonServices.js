@@ -67,6 +67,15 @@
                     }
 
                     return result;
+                },
+
+                defineCurrentPageNo: function (pagedList, currentPageNo) {
+                    var actualPageNo = currentPageNo - 1;
+                    var currentPage = pagedList[actualPageNo];
+                    if (actualPageNo != 0 && currentPage == null) {
+                        currentPageNo--;
+                    }
+                    return currentPageNo;
                 }
             };
         }]);
