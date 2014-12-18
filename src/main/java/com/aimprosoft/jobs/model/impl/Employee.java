@@ -4,7 +4,6 @@ import com.aimprosoft.jobs.dao.DataSourceException;
 import com.aimprosoft.jobs.model.PersistEntity;
 import com.aimprosoft.jobs.service.EmployeeService;
 import com.aimprosoft.jobs.service.impl.EmployeeServiceImpl;
-import com.aimprosoft.jobs.util.CommonUtils;
 import com.aimprosoft.jobs.util.SpringUtils;
 import net.sf.oval.constraint.Email;
 import net.sf.oval.constraint.Length;
@@ -112,7 +111,10 @@ public class Employee implements PersistEntity {
     }
 
     public Integer getDepartmentId() {
-        return department.getId();
+        if (department != null) {
+            return department.getId();
+        }
+        return departmentId;
     }
 
     public void setDepartmentId(Integer departmentId) {

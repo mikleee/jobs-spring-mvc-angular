@@ -6,18 +6,24 @@
     departmentServices.service('depService', ['$rootScope', '$http', 'notificationService', 'pagingService', 'validationService', 'tabService', 'departmentFormService',
         function ($rootScope, $http, notificationService, pagingService, validationService, tabService, departmentFormService) {
 
-            var pageSize = 0, currentPageNo = 1, depList = [], pagedDepList = [], validationResult, serverMessages = {};
+            var pageSize = 0, currentPageNo = 1, depList = [], pagedDepList = [], validationResult, serverMessages = {}, processing = false;
 
             var handleSuccessCallback = function (response, notificationMessage) {
                 depList = response.data;
                 pagedDepList = pagingService.paginate(depList, pageSize);
                 notificationService.notifySuccess(notificationMessage);
+                processing = false;
             };
             var handleFailCallback = function (response, notificationMessage) {
                 notificationService.notifyFail(notificationMessage);
+                processing = false;
+            };
+            var notifyWaiting = function (message) {
+                notificationService.notifyWaiting(message);
+                processing = true;
             };
             var notifyValidation = function (validationResult) {
-                if (tabService.isDepForm()) {
+                if (tabService.isDepForm() && !processing) {
                     if (validationResult.isValid) {
                         notificationService.notifySuccess('All correct');
                     } else {
@@ -94,7 +100,7 @@
 
                 refreshDepList: function (pageSize) {
                     this.setPageSize(pageSize);
-                    notificationService.notifyWaiting('Fetching department list...');
+                    notifyWaiting('Fetching department list...');
                     $http.get('/depList').then(
                         function (response) {
                             handleSuccessCallback(response, 'Department list was updated. Try pagination.');
@@ -104,7 +110,7 @@
                     );
                 },
                 populateWithTestData: function (result) {
-                    notificationService.notifyWaiting('Populating department list with test data...');
+                    notifyWaiting('Populating department list with test data...');
                     $http.post('/populate').then(
                         function (response) {
                             handleSuccessCallback(response, 'Department list was populated with test data');
@@ -114,7 +120,7 @@
                     );
                 },
                 deleteAll: function (result) {
-                    notificationService.notifyWaiting('Clearing department list...');
+                    notifyWaiting('Clearing department list...');
                     $http.post('/deleteAllDepartments').then(
                         function (response) {
                             afterCallBackLogic.doAfterDeleteAllLogic();
@@ -124,7 +130,7 @@
                     );
                 },
                 addOne: function (department) {
-                    notificationService.notifyWaiting('Adding ' + angular.toJson(department) + ' department...');
+                    notifyWaiting('Adding ' + angular.toJson(department) + ' department...');
                     $http.post('/persistDepartment', department).then(
                         function (response) {
                             afterCallBackLogic.doAfterAddLogic(response, department);
@@ -134,7 +140,7 @@
                     );
                 },
                 deleteOne: function (department) {
-                    notificationService.notifyWaiting('Deleting ' + angular.toJson(department) + ' department...');
+                    notifyWaiting('Deleting ' + angular.toJson(department) + ' department...');
                     $http.post('/depDelete', department).then(
                         function (response) {
                             afterCallBackLogic.doAfterDeleteOneLogic(response, department);

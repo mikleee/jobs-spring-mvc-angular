@@ -89,6 +89,10 @@
 
         return {
 
+            getActiveTab: function () {
+                return activeTab;
+            },
+
             isDepList: function () {
                 return activeTab == tabs.depList;
             },
@@ -115,6 +119,7 @@
             setEmpFormAsActive: function () {
                 activeTab = tabs.empForm;
                 hideEmpForm = false;
+                documentModifier.appendDatePicker();
             },
 
             isEmpListHide: function () {
@@ -129,6 +134,7 @@
                 if (activeTab == tabs.empList) {
                     activeTab = tabs.depList;
                 }
+
             },
             hideEmpForm: function () {
                 hideEmpForm = true;

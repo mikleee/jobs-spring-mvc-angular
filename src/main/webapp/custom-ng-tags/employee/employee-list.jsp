@@ -8,10 +8,7 @@
         <td class="col-1-5">EMAIL</td>
         <td class="col-1-5">BIRTH</td>
         <td class="col-15">
-            <div class="btn-group">
-                <button class="btn btn-default btn-sm" ng-click="actions.showAddForm()">Add new</button>
-                <button class="btn btn-default btn-sm" ng-click="actions.deleteAll()">Delete all</button>
-            </div>
+            <button class="btn btn-default btn-sm" ng-click="actions.showAddForm()">Add new</button>
         </td>
     </tr>
     </thead>

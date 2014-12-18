@@ -17,8 +17,6 @@
             templateUrl: 'custom-ng-tags/department/department-form.jsp'
         };
     });
-
-
     directives.directive("departmentList", function () {
         return {
             restrict: 'E',
@@ -31,6 +29,12 @@
         return {
             restrict: 'E',
             templateUrl: 'custom-ng-tags/employee/employee-list.jsp'
+        };
+    });
+    directives.directive("employeeForm", function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'custom-ng-tags/employee/employee-form.jsp'
         };
     });
 

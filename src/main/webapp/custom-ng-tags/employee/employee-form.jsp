@@ -68,7 +68,7 @@
                 </div>
                 <div class="inline-container">
                     <div class="col-2-3">
-                        <input id="empBirth" type="text" placeholder="enter birth"
+                        <input id="empBirth" type="text" placeholder="enter birth" class="datePicker"
                                ng-model="currentEmp.birth"
                                ng-class="{inputInvalid : fieldInvalid('birth'), inputDefault : !fieldInvalid('birth')}"/>
                     </div>

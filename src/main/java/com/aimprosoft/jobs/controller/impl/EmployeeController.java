@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 
 @Controller("employeeControllerMVC")
@@ -34,11 +35,11 @@ public class EmployeeController extends GenericController {
         return employeeService.getAllInDepartment(depId);
     }
 
-    @RequestMapping(value = "/empDelete", method = RequestMethod.POST)
+    @RequestMapping(value = "/empDelete", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseBody
-    public Integer deleteEmployee(@RequestParam(required = false) Integer empId) throws DataSourceException, EvilUserDetectedException {
-        employeeService.delete(empId);
-        return empId;
+    public List<Employee> deleteEmployee(@RequestBody Employee employee) throws DataSourceException, EvilUserDetectedException {
+        employeeService.delete(employee.getId());
+        return employeeService.getAllInDepartment(employee.getDepartmentId());
     }
 
     @RequestMapping(value = "/empAddOrUpdate.html", method = RequestMethod.GET)

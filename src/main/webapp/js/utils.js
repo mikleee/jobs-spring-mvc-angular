@@ -61,6 +61,7 @@ var Constants = {
     events: {
         depDeleted: 'DEPARTMENT_WAS_DELETED'
     }
+
 };
 
 var Messages = {
@@ -70,5 +71,21 @@ var Messages = {
         return'All departments were deleted.';
     }, depPersisted: function (department) {
         return angular.toJson(department) + ' department was ' + (department.id ? 'updated' : 'added');
+    },
+    empDeleted: function (department) {
+        return angular.toJson(department) + ' employee was deleted.'
     }
+};
+
+
+var documentModifier = {
+
+    appendDatePicker: function () {
+        var dateInputs = jQuery('.datePicker');
+        console.log('found ' + dateInputs.length + ' datePickers');
+        jQuery.each(dateInputs, function (index, value) {
+            jQuery(value).datepicker();
+        });
+    }
+
 };

@@ -56,19 +56,19 @@
             <div class="developer-info-area">
                 <div class="developer-info-area">
                     <label for="currentEmpValidation">
-                        {{currentEmpValidation ? 'Hide' : 'Show'}} current empartment validation report
+                        {{currentEmpValidation ? 'Hide' : 'Show'}} current employee validation report
                     </label>
                     <input id="currentEmpValidation" type="checkbox" ng-model="currentEmpValidation">
                 </div>
                 <div class="developer-info-area" ng-show="currentEmpValidation">
-                    {{validationReport.empartment()}}
+                    {{validationReport.employee()}}
                 </div>
             </div>
 
             <div class="developer-info-area">
                 <div class="developer-info-area">
                     <label for="empRawData">
-                        {{empRawData ? 'Hide' : 'Show'}} raw empartment data
+                        {{empRawData ? 'Hide' : 'Show'}} raw employee data
                     </label>
                     <input id="empRawData" type="checkbox" ng-model="empRawData">
                 </div>
@@ -80,7 +80,7 @@
             <div class="developer-info-area">
                 <div class="developer-info-area">
                     <label for="empPagedData">
-                        {{empPagedData ? 'Hide' : 'Show'}} paged empartment data
+                        {{empPagedData ? 'Hide' : 'Show'}} paged employee data
                     </label>
                     <input id="empPagedData" type="checkbox" ng-model="empPagedData">
                 </div>
