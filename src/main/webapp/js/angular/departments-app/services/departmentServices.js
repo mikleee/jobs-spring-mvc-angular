@@ -37,12 +37,13 @@
                         serverMessages = response.data['serverMessages'];
                     } else {
                         handleSuccessCallback(response, Messages.depPersisted(department));
-                        if (departmentFormService.isEditStatus()) {
-                            departmentFormService.setAddStatus();
-                            tabService.setDepListAsActive();
-                        } else {
-                            $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
-                        }
+//                        if (departmentFormService.isEditStatus()) {
+//                            departmentFormService.setAddStatus();
+//                            tabService.setDepListAsActive();
+//                        } else {
+//                            $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+//                        }
+                        tabService.hidePopup();
                     }
                 },
                 doAfterDeleteOneLogic: function (response, department) {

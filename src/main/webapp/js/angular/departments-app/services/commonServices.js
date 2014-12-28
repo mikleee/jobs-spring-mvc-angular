@@ -82,8 +82,9 @@
 
 
     commonServices.service('tabService', function () {
-        var tabs = {depList: 1, depForm: 2, empList: 3, empForm: 4},
+        var tabs = Constants.tabs,
             activeTab = tabs.depList,
+            activePopup,
             hideEmpList = true,
             hideEmpForm = true;
 
@@ -97,29 +98,35 @@
                 return activeTab == tabs.depList;
             },
             isDepForm: function () {
-                return activeTab == tabs.depForm;
+                return activePopup == tabs.depForm;
             },
             isEmpList: function () {
                 return activeTab == tabs.empList;
             },
             isEmpForm: function () {
-                return activeTab == tabs.empForm;
+                return activePopup == tabs.empForm;
+            },
+            isPopup: function () {
+                return this.isDepForm() || this.isEmpForm();
             },
 
             setDepListAsActive: function () {
                 activeTab = tabs.depList;
             },
             setDepFormAsActive: function () {
-                activeTab = tabs.depForm;
+                activePopup = tabs.depForm;
             },
             setEmpListAsActive: function () {
                 activeTab = tabs.empList;
                 hideEmpList = false;
             },
             setEmpFormAsActive: function () {
-                activeTab = tabs.empForm;
+                activePopup = tabs.empForm;
                 hideEmpForm = false;
                 documentModifier.appendDatePicker();
+            },
+            hidePopup: function () {
+                activePopup = null;
             },
 
             isEmpListHide: function () {

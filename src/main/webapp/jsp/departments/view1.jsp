@@ -16,27 +16,34 @@
 <div class="col-70 text-section-default separated-y" ng-controller="MainController">
 
 
-    <div class="container">
+    <div class="">
 
-        <div class="row separated-y">
-            <tabs-panel></tabs-panel>
+        <div class="separated-y">
+        <tabs-panel></tabs-panel>
         </div>
 
-        <div class="row separated-y" ng-show="conditions.isDepForm()">
-            <department-form></department-form>
-        </div>
+        <div class="relative">
 
+            <div class="separated-y">
+                <department-list ng-show="conditions.isDepList()"></department-list>
+                <employee-list ng-show="conditions.isEmpList()"></employee-list>
+            </div>
 
-        <div class="row separated-y" ng-show="conditions.isDepList()">
-            <department-list></department-list>
-        </div>
+            <div class="separated-y popup" ng-show="conditions.isPopup()">
+                <div class="popup-content">
+                    <div class="inline-container underline-light-gray">
+                        <div class="col-95">form</div>
+                        <div class="col-05">
+                            <span class="closeIcon glyphicon glyphicon-remove" title="close" aria-hidden="true" ng-click="hidePopup()"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <department-form ng-show="conditions.isDepForm()"></department-form>
+                        <employee-form ng-show="conditions.isEmpForm()"></employee-form>
+                    </div>
+                </div>
+            </div>
 
-        <div class="row separated-y" ng-show="conditions.isEmpList()">
-            <employee-list></employee-list>
-        </div>
-
-        <div class="row separated-y" ng-show="conditions.isEmpForm()">
-            <employee-form></employee-form>
         </div>
 
     </div>

@@ -9,8 +9,11 @@
                 isDepList: tabService.isDepList,
                 isDepForm: tabService.isDepForm,
                 isEmpList: tabService.isEmpList,
-                isEmpForm: tabService.isEmpForm
+                isEmpForm: tabService.isEmpForm,
+                isPopup: tabService.isPopup
             };
+
+            $scope.hidePopup = tabService.hidePopup;
 
         }
     ]);
@@ -151,117 +154,6 @@
         }
 
     ]);
-
-
-    /*    departments.controller('EmployeeListController', ['$scope', '$rootScope', 'depService', 'departmentFormService', 'tabService', 'empService',
-     function ($scope, $rootScope, depService, departmentFormService, tabService, empService) {
-
-     $scope.models = {
-     pageSize: 5,
-     pageSizes: [3, 5, 10]
-     };
-
-     $scope.data = {
-     currentPageNo: 1,
-     rawData: empService.getEmpList,
-     pagedData: empService.getPagedData,
-     currentPage: function () {
-     return this.pagedData()[this.currentPageNo - 1];
-     }
-     };
-
-     $scope.actions = {
-     deleteAll: function () {
-     $scope.data.currentPageNo = 1;
-     empService.deleteAll();
-     },
-     showEditForm: function (department) {
-     departmentFormService.setEditStatus(department);
-     },
-     showAddForm: departmentFormService.setAddStatus,
-     deleteOne: function (employee) {
-     empService.deleteOne(employee);
-     $scope.data.currentPageNo = 1;
-     },
-     setCurrentPage: function (page) {
-     $scope.data.currentPageNo = page.number;
-     },
-     setPageSize: function (pageSize) {
-     $scope.data.currentPageNo = 1;
-     $scope.models.pageSize = pageSize;
-     empService.repaginate(pageSize);
-     }
-     };
-
-     $scope.conditions = {
-     isEmpty: function () {
-     return empService.getEmpList().length == 0;
-     },
-     isCurrentPage: function (page) {
-     return page.number == $scope.data.currentPageNo;
-     },
-     isCurrentPageSize: function (pageSize) {
-     return pageSize == $scope.models.pageSize;
-     }
-     };
-
-
-     }
-     ]);
-
-
-     departments.controller('EmployeeFormController', ['$scope', 'empService', 'employeeFormService',
-     function ($scope, empService, employeeFormService) {
-
-     $scope.$on('CHECK_EMP_FORM_MODEL', function () {
-     $scope.currentEmp = employeeFormService.getFixedEmployee();
-     });
-
-     $scope.$watch('currentEmp.email', function (oldV, newV) {
-     empService.clearServerMessages();
-     });
-
-     $scope.currentEmp = {name: '', location: ''};
-
-     $scope.conditions = {
-     isEmptyDep: function () {
-     return $scope.currentDep.name == '' && $scope.currentDep.location == '';
-     },
-     isEdit: departmentFormService.isEditStatus,
-     isAdd: departmentFormService.isAddStatus
-     };
-
-     $scope.actions = {
-     add: function () {
-     depService.addOne($scope.currentDep);
-     },
-     setAddStatus: function () {
-     depService.resetDepartment($scope.currentDep);
-     departmentFormService.setAddStatus();
-     }
-     };
-
-     $scope.validationResult = function () {
-     return depService.validate($scope.currentDep);
-     };
-
-     $scope.fieldInvalid = function (fieldName) {
-     var isDirty = !$scope.conditions.isEmptyDep(),
-     validationResult = $scope.validationResult();
-     return !validationResult[fieldName].isValid && isDirty;
-     };
-
-     $scope.validationMessage = function (fieldName) {
-     var validationResult = $scope.validationResult();
-     return validationResult[fieldName].message;
-     };
-
-     $scope.getDepartmentForEdit = departmentFormService.getFixedDepartment;
-
-     }
-
-     ]);*/
-
 
     departments.controller('NotificationBarController', ['$scope', 'notificationService',
         function ($scope, notificationService) {

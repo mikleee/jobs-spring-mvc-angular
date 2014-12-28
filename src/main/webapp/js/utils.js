@@ -49,6 +49,8 @@ var Utils = {
 
 var Constants = {
 
+    tabs: {depList: 'dep-list', depForm: 'dep-form', empList: 'emp-list', empForm: 'emp-form'},
+
     validationRules: {
         department: {
             name: {pattern: '^[a-zA-Z]{3,20}$', message: 'the name should be alpha [3 - 20]'},
