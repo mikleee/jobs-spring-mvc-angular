@@ -104,7 +104,7 @@
                         validationResult = validationService.validate(employee, Constants.validationRules.employee, serverMessages);
                         notifyValidation(validationResult);
                     } else {
-                        validationResult = {isValid: false, name: {isValid: true}, location: {isValid: true}};
+                        validationResult = {isValid: false, name: {isValid: true}, salary: {isValid: true}, email: {isValid: true}, birth: {isValid: true}};
                     }
                     return validationResult;
                 },

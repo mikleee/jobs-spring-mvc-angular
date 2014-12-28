@@ -10,15 +10,15 @@
                 </div>
                 <div class="inline-container">
                     <div class="col-2-3">
-                        <input id="depName" type="text" placeholder="enter name"
+                        <input id="depName" type="text" placeholder="enter name" class="inputDefault"
                                ng-model="currentDep.name" <%--ng-change="actions.clearServerMessages()"--%>
-                               ng-class="{inputInvalid : fieldInvalid('name'), inputDefault : !fieldInvalid('name')}"/>
+                               ng-class="{inputInvalid : fieldInvalid('name')}"/>
                     </div>
                     <div class="col-10">
                         <img ng-show="fieldInvalid('name')"
                              title="{{validationMessage('name')}}"
                              style="height: 30px"
-                             src="/img/question.png">
+                             src="../../img/question.png">
                     </div>
                 </div>
             </div>
@@ -29,15 +29,15 @@
                 </div>
                 <div class="inline-container">
                     <div class="col-2-3">
-                        <input id="depLocation" type="text" placeholder="enter location"
+                        <input id="depLocation" type="text" placeholder="enter location" class="inputDefault"
                                ng-model="currentDep.location"
-                               ng-class="{inputInvalid : fieldInvalid('location'), inputDefault : !fieldInvalid('location')}"/>
+                               ng-class="{inputInvalid : fieldInvalid('location')}"/>
                     </div>
                     <div class="col-10">
                         <img ng-show="fieldInvalid('location')"
                              title="{{validationMessage('location')}}"
                              style="height: 30px"
-                             src="/img/question.png">
+                             src="../../img/question.png">
                     </div>
                 </div>
             </div>

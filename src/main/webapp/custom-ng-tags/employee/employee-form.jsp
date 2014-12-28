@@ -11,15 +11,15 @@
                 </div>
                 <div class="inline-container">
                     <div class="col-2-3">
-                        <input id="empName" type="text" placeholder="enter name"
+                        <input id="empName" type="text" placeholder="enter name" class="inputDefault"
                                ng-model="currentEmp.name"
-                               ng-class="{inputInvalid : fieldInvalid('name'), inputDefault : !fieldInvalid('name')}"/>
+                               ng-class="{inputInvalid : fieldInvalid('name')}"/>
                     </div>
                     <div class="col-10">
                         <img ng-show="fieldInvalid('name')"
                              title="{{validationMessage('name')}}"
                              style="height: 30px"
-                             src="/img/question.png">
+                             src="../../img/question.png">
                     </div>
                 </div>
             </div>
@@ -30,15 +30,15 @@
                 </div>
                 <div class="inline-container">
                     <div class="col-2-3">
-                        <input id="empSalary" type="text" placeholder="enter salary"
+                        <input id="empSalary" type="text" placeholder="enter salary" class="inputDefault"
                                ng-model="currentEmp.salary"
-                               ng-class="{inputInvalid : fieldInvalid('salary'), inputDefault : !fieldInvalid('salary')}"/>
+                               ng-class="{inputInvalid : fieldInvalid('salary')}"/>
                     </div>
                     <div class="col-10">
                         <img ng-show="fieldInvalid('salary')"
                              title="{{validationMessage('salary')}}"
                              style="height: 30px"
-                             src="/img/question.png">
+                             src="../../img/question.png">
                     </div>
                 </div>
             </div>
@@ -49,15 +49,15 @@
                 </div>
                 <div class="inline-container">
                     <div class="col-2-3">
-                        <input id="empEmail" type="text" placeholder="enter email"
+                        <input id="empEmail" type="text" placeholder="enter email" class="inputDefault"
                                ng-model="currentEmp.email"
-                               ng-class="{inputInvalid : fieldInvalid('email'), inputDefault : !fieldInvalid('email')}"/>
+                               ng-class="{inputInvalid : fieldInvalid('email')}"/>
                     </div>
                     <div class="col-10">
                         <img ng-show="fieldInvalid('email')"
                              title="{{validationMessage('email')}}"
                              style="height: 30px"
-                             src="/img/question.png">
+                             src="../../img/question.png">
                     </div>
                 </div>
             </div>
@@ -68,15 +68,15 @@
                 </div>
                 <div class="inline-container">
                     <div class="col-2-3">
-                        <input id="empBirth" type="text" placeholder="enter birth" class="datePicker"
+                        <input id="empBirth" type="text" placeholder="enter birth" class="datePicker inputDefault"
                                ng-model="currentEmp.birth"
-                               ng-class="{inputInvalid : fieldInvalid('birth'), inputDefault : !fieldInvalid('birth')}"/>
+                               ng-class="{inputInvalid : fieldInvalid('birth')}"/>
                     </div>
                     <div class="col-10">
                         <img ng-show="fieldInvalid('birth')"
                              title="{{validationMessage('birth')}}"
                              style="height: 30px"
-                             src="/img/question.png">
+                             src="../../img/question.png">
                     </div>
                 </div>
             </div>

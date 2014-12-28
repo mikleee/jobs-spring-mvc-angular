@@ -297,7 +297,8 @@
             };
 
             $scope.validationReport = {
-                department: depService.getValidationResult
+                department: depService.getValidationResult,
+                employee: empService.getValidationResult
             };
 
         }

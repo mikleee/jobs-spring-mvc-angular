@@ -73,32 +73,32 @@
                 empService.clearServerMessages();
             });
 
-            $scope.currentEmp = {name: '', location: ''};
+            $scope.currentEmp = Utils.createEmptyModel(['name', 'salary', 'email', 'birth']);
 
             $scope.conditions = {
-                isEmptyDep: function () {
+                isEmptyEmp: function () {
                     return $scope.currentDep.name == '' && $scope.currentDep.location == '';
                 },
-                isEdit: departmentFormService.isEditStatus,
-                isAdd: departmentFormService.isAddStatus
+                isEdit: employeeFormService.isEditStatus,
+                isAdd: employeeFormService.isAddStatus
             };
 
             $scope.actions = {
                 add: function () {
-                    depService.addOne($scope.currentDep);
+                    empService.addOne($scope.currentEmp);
                 },
                 setAddStatus: function () {
-                    depService.resetDepartment($scope.currentDep);
-                    departmentFormService.setAddStatus();
+                    empService.resetDepartment($scope.currentEmp);
+                    employeeFormService.setAddStatus();
                 }
             };
 
             $scope.validationResult = function () {
-                return depService.validate($scope.currentDep);
+                return empService.validate($scope.currentEmp);
             };
 
             $scope.fieldInvalid = function (fieldName) {
-                var isDirty = !$scope.conditions.isEmptyDep(),
+                var isDirty = !Utils.isModelEmpty($scope.currentEmp),
                     validationResult = $scope.validationResult();
                 return !validationResult[fieldName].isValid && isDirty;
             };
@@ -108,7 +108,7 @@
                 return validationResult[fieldName].message;
             };
 
-            $scope.getDepartmentForEdit = departmentFormService.getFixedDepartment;
+            $scope.getDepartmentForEdit = employeeFormService.getFixedDepartment;
 
         }
 
