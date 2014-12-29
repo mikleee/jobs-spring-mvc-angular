@@ -43,6 +43,12 @@ var Utils = {
         return false;
     }, isAbsent: function (collection, model) {
         return !this.isPresent(collection, model);
+    },
+
+    parseDate: function (stringDate) {
+        var array = stringDate.split('/');
+        var day = array[0], month = array[1], year = array[2];
+        return new Date(year, month - 1, day).getTime();
     }
 
 };
@@ -92,7 +98,8 @@ var documentModifier = {
         var options = {
             onSelect: function (dateText, inst) {
                 rootScope.$broadcast(eventName, dateText);
-            }
+            },
+            dateFormat: "dd/mm/yy"
         };
         console.log('found ' + dateInputs.length + ' datePickers');
         jQuery.each(dateInputs, function (index, value) {

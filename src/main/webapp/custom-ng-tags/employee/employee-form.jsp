@@ -69,7 +69,7 @@
                 <div class="inline-container">
                     <div class="col-2-3">
                         <input id="empBirth" type="text" placeholder="enter birth" class="datePicker inputDefault"
-                               ng-model="currentEmp.birth"
+                               value="{{currentEmp.birth | date : 'dd/MM/yyyy'}}"
                                ng-class="{inputInvalid : fieldInvalid('birth')}"/>
                     </div>
                     <div class="col-10">
@@ -82,37 +82,53 @@
             </div>
         </div>
 
-        <%--<div ng-show="conditions.isEdit()" class="col-1-3">--%>
-        <%--<div class="separated-y underline-light-gray">--%>
-        <%--<div>--%>
-        <%--Empartment:--%>
-        <%--</div>--%>
-        <%--</div>--%>
-        <%--<div class="separated-y inline-container">--%>
-        <%--<div class="col-1-2">--%>
-        <%--Id:--%>
-        <%--</div>--%>
-        <%--<div class="col-1-2">--%>
-        <%--{{getEmpartmentForEdit().id}}--%>
-        <%--</div>--%>
-        <%--</div>--%>
-        <%--<div class="separated-y inline-container">--%>
-        <%--<div class="col-1-2">--%>
-        <%--Name:--%>
-        <%--</div>--%>
-        <%--<div class="col-1-2">--%>
-        <%--{{getEmpartmentForEdit().name}}--%>
-        <%--</div>--%>
-        <%--</div>--%>
-        <%--<div class="separated-y inline-container">--%>
-        <%--<div class="col-1-2">--%>
-        <%--Location:--%>
-        <%--</div>--%>
-        <%--<div class="col-1-2">--%>
-        <%--{{getEmpartmentForEdit().location}}--%>
-        <%--</div>--%>
-        <%--</div>--%>
-        <%--</div>--%>
+        <div ng-show="conditions.isEdit()" class="col-1-3">
+            <div class="separated-y underline-light-gray">
+                <div>
+                    Employee:
+                </div>
+            </div>
+            <div class="separated-y inline-container">
+                <div class="col-1-2">
+                    Id:
+                </div>
+                <div class="col-1-2">
+                    {{getEmployeeForEdit().id}}
+                </div>
+            </div>
+            <div class="separated-y inline-container">
+                <div class="col-1-2">
+                    Name:
+                </div>
+                <div class="col-1-2">
+                    {{getEmployeeForEdit().name}}
+                </div>
+            </div>
+            <div class="separated-y inline-container">
+                <div class="col-1-2">
+                    Salary:
+                </div>
+                <div class="col-1-2">
+                    {{getEmployeeForEdit().salary}}
+                </div>
+            </div>
+            <div class="separated-y inline-container">
+                <div class="col-1-2">
+                    Email:
+                </div>
+                <div class="col-1-2">
+                    {{getEmployeeForEdit().email}}
+                </div>
+            </div>
+            <div class="separated-y inline-container">
+                <div class="col-1-2">
+                    Birth:
+                </div>
+                <div class="col-1-2">
+                    {{getEmployeeForEdit().birth | date : "dd/MM/yyyy"}}
+                </div>
+            </div>
+        </div>
 
     </div>
 

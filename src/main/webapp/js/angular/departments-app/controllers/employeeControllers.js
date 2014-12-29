@@ -71,7 +71,7 @@
                 Utils.clearModel($scope.currentEmp);
             });
             $scope.$on('EMP_BIRTH_SELECTED', function (event, stringDate) {
-                $scope.currentEmp.birth = stringDate;
+                $scope.currentEmp.birth = Utils.parseDate(stringDate);
             });
 
 
@@ -114,7 +114,7 @@
                 return validationResult[fieldName].message;
             };
 
-            $scope.getDepartmentForEdit = employeeFormService.getFixedDepartment;
+            $scope.getEmployeeForEdit = employeeFormService.getFixedEmployee;
 
         }
 
