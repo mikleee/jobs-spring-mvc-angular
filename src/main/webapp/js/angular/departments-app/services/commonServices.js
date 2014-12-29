@@ -7,7 +7,7 @@
     commonServices.service('notificationService', [
         function () {
 
-            var statuses = {success: 'SUCCESS', fail: 'FAIL', waiting: 'WAITING'},
+            var statuses = Constants.notificationStatuses,
                 lastNotification = {status: statuses.success, message: 'nothing happened'};
 
             return {
@@ -26,17 +26,17 @@
                 },
 
                 isFail: function () {
-                    return  lastNotification.status == statuses.fail;
+                    return lastNotification.status == statuses.fail;
                 },
                 isSuccess: function () {
-                    return  lastNotification.status == statuses.success;
+                    return lastNotification.status == statuses.success;
                 },
                 isWaiting: function () {
-                    return  lastNotification.status == statuses.waiting;
+                    return lastNotification.status == statuses.waiting;
                 },
 
                 getMessage: function () {
-                    return  lastNotification.message;
+                    return lastNotification.message;
                 }
 
             }
@@ -83,8 +83,10 @@
 
     commonServices.service('tabService', function () {
         var tabs = Constants.tabs,
+            popupStatuses = Constants.popupStatuses,
             activeTab = tabs.depList,
             activePopup,
+            popupStatus,
             hideEmpList = true,
             hideEmpForm = true;
 
@@ -125,9 +127,23 @@
                 hideEmpForm = false;
                 documentModifier.appendDatePicker();
             },
+
             hidePopup: function () {
                 activePopup = null;
             },
+            setAddPopupStatus: function () {
+                popupStatus = popupStatuses.add;
+            },
+            setEditPopupStatus: function () {
+                popupStatus = popupStatuses.edit;
+            },
+            isAddPopupStatus: function () {
+                return popupStatus == popupStatuses.add;
+            },
+            isEditPopupStatus: function () {
+                return popupStatus == popupStatuses.edit;
+            },
+
 
             isEmpListHide: function () {
                 return hideEmpList;

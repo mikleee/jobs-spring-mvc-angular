@@ -50,15 +50,15 @@ var Utils = {
 var Constants = {
 
     tabs: {depList: 'dep-list', depForm: 'dep-form', empList: 'emp-list', empForm: 'emp-form'},
+    popupStatuses: {add: 'ADD', edit: 'EDIT'},
+    notificationStatuses: {success: 'SUCCESS', fail: 'FAIL', waiting: 'WAITING'},
 
     validationRules: {
         department: {
             name: {pattern: '^[a-zA-Z]{3,20}$', message: 'the name should be alpha [3 - 20]'},
             location: {pattern: '^[a-zA-Z]{0,20}$', message: 'the location should be alpha [0 - 20]'}
         },
-        employee: {
-
-        }
+        employee: {}
     },
     events: {
         depDeleted: 'DEPARTMENT_WAS_DELETED'
@@ -70,9 +70,12 @@ var Messages = {
     depDeleted: function (department) {
         return angular.toJson(department) + ' department was deleted.'
     }, depListCleared: function () {
-        return'All departments were deleted.';
+        return 'All departments were deleted.';
     }, depPersisted: function (department) {
         return angular.toJson(department) + ' department was ' + (department.id ? 'updated' : 'added');
+    },
+    depPersistingFailed: function (department, serverMessages) {
+        return angular.toJson(department) + ' persisting failed, reason: ' + angular.toJson(serverMessages);
     },
     empDeleted: function (department) {
         return angular.toJson(department) + ' employee was deleted.'

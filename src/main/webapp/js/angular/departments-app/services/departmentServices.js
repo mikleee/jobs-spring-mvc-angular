@@ -35,6 +35,7 @@
                 doAfterAddLogic: function (response, department) {
                     if (response.data.status == 'validation-error') {
                         serverMessages = response.data['serverMessages'];
+                        notificationService.notifyFail(Messages.depPersistingFailed(department, serverMessages));
                     } else {
                         handleSuccessCallback(response, Messages.depPersisted(department));
 //                        if (departmentFormService.isEditStatus()) {
@@ -48,14 +49,14 @@
                 },
                 doAfterDeleteOneLogic: function (response, department) {
                     handleSuccessCallback(response, Messages.depDeleted(department));
-                    if (Utils.isAbsent(departmentFormService.getFixedDepartment())) {
-                        departmentFormService.setAddStatus();
-                    }
+                    //if (Utils.isAbsent(departmentFormService.getFixedDepartment())) {
+                    //    departmentFormService.setAddStatus();
+                    //}
                     currentPageNo = pagingService.defineCurrentPageNo(pagedDepList, currentPageNo);
                 },
                 doAfterDeleteAllLogic: function () {
                     handleSuccessCallback({data: []}, Messages.depListCleared());
-                    departmentFormService.setAddStatus();
+                    //departmentFormService.setAddStatus();
                     currentPageNo = 1;
                 }
             };
@@ -159,31 +160,31 @@
 
     departmentServices.service('departmentFormService', ['$rootScope', 'tabService',
         function ($rootScope, tabService) {
-            var statuses = {add: 'ADD', edit: 'EDIT'},
+            var statuses = Constants.popupStatuses,
                 status = statuses.add,
                 fixedDepartment = {};
 
             return {
-                isEditStatus: function () {
-                    return status == statuses.edit;
-                },
-                isAddStatus: function () {
-                    return status == statuses.add;
-                },
+
                 setAddStatus: function () {
                     status = statuses.add;
                     Utils.clearModel(fixedDepartment);
-                    $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+                    //$rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+                    tabService.setDepFormAsActive();
+                    tabService.setAddPopupStatus();
                 },
                 setEditStatus: function (department) {
                     fixedDepartment = angular.copy(department);
                     status = statuses.edit;
-                    $rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+                    $rootScope.$broadcast('CLEAR_DEP_FORM_MODEL');
                     tabService.setDepFormAsActive();
+                    tabService.setEditPopupStatus();
                 },
                 getFixedDepartment: function () {
                     return angular.copy(fixedDepartment);
-                }
+                },
+                isEditStatus: tabService.isEditPopupStatus,
+                isAddStatus: tabService.isAddPopupStatus
             };
         }
     ]);

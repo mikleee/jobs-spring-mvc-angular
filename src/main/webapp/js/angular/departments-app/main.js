@@ -10,10 +10,30 @@
                 isDepForm: tabService.isDepForm,
                 isEmpList: tabService.isEmpList,
                 isEmpForm: tabService.isEmpForm,
-                isPopup: tabService.isPopup
+                isPopup: tabService.isPopup,
+                isAddStatus: tabService.isAddPopupStatus,
+                isEditStatus: tabService.isEditPopupStatus
             };
 
             $scope.hidePopup = tabService.hidePopup;
+
+            $scope.popupTitle = function (addLabel, editLabel, departmentLabel, employeeLabel) {
+                var entityLabel, statusLabel;
+
+                if (tabService.isAddPopupStatus()) {
+                    statusLabel = addLabel;
+                } else if (tabService.isEditPopupStatus()) {
+                    statusLabel = editLabel;
+                }
+
+                if (tabService.isDepForm()) {
+                    entityLabel = departmentLabel;
+                } else if (tabService.isEmpForm()) {
+                    entityLabel = employeeLabel
+                }
+
+                return statusLabel + ' ' + entityLabel;
+            }
 
         }
     ]);
@@ -68,7 +88,6 @@
                 },
                 showAddForm: function () {
                     departmentFormService.setAddStatus();
-                    tabService.setDepFormAsActive();
                 },
                 deleteOne: function (department) {
                     depService.deleteOne(department);
@@ -106,8 +125,8 @@
     departments.controller('DepartmentFormController', ['$scope', 'depService', 'departmentFormService',
         function ($scope, depService, departmentFormService) {
 
-            $scope.$on('CHECK_DEP_FORM_MODEL', function () {
-                $scope.currentDep = departmentFormService.getFixedDepartment();
+            $scope.$on('CLEAR_DEP_FORM_MODEL', function () {
+                Utils.clearModel($scope.currentDep);
             });
 
             $scope.$watch('currentDep.name', function (oldV, newV) {

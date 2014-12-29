@@ -13,16 +13,16 @@
 <notification-bar></notification-bar>
 
 
-<div class="col-70 text-section-default separated-y" ng-controller="MainController">
+<div class="col-80 <%--text-section-default --%>separated-y" ng-controller="MainController">
 
 
-    <div class="">
+    <div class="inline-container">
 
-        <div class="separated-y">
-        <tabs-panel></tabs-panel>
+        <div class="separated-y col-15">
+            <tabs-panel></tabs-panel>
         </div>
 
-        <div class="relative">
+        <div class="relative col-85">
 
             <div class="separated-y">
                 <department-list ng-show="conditions.isDepList()"></department-list>
@@ -31,8 +31,8 @@
 
             <div class="separated-y popup" ng-show="conditions.isPopup()">
                 <div class="popup-content">
-                    <div class="inline-container underline-light-gray">
-                        <div class="col-95">form</div>
+                    <div class="popup-header">
+                        <div class="col-95">{{popupTitle('Add','Edit','department','employee')}}</div>
                         <div class="col-05">
                             <span class="closeIcon glyphicon glyphicon-remove" title="close" aria-hidden="true" ng-click="hidePopup()"></span>
                         </div>
