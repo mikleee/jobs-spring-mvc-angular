@@ -10,6 +10,7 @@
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/main.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/directives.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/controllers/employeeControllers.js"/>"></script>
+<script type="text/javascript" src="<c:url value ="/js/angular/departments-app/controllers/departmentControllers.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/services/departmentServices.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/services/employeeServices.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/services/commonServices.js"/>"></script>

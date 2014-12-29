@@ -81,7 +81,7 @@
         }]);
 
 
-    commonServices.service('tabService', function () {
+    commonServices.service('tabService', ['$rootScope', function ($rootScope) {
         var tabs = Constants.tabs,
             popupStatuses = Constants.popupStatuses,
             activeTab = tabs.depList,
@@ -125,7 +125,7 @@
             setEmpFormAsActive: function () {
                 activePopup = tabs.empForm;
                 hideEmpForm = false;
-                documentModifier.appendDatePicker();
+                documentModifier.appendDatePicker($rootScope, 'EMP_BIRTH_SELECTED');
             },
 
             hidePopup: function () {
@@ -167,7 +167,7 @@
             }
 
         };
-    });
+    }]);
 
 
     commonServices.service('validationService', [

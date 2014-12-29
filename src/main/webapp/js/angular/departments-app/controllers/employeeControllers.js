@@ -25,12 +25,11 @@
                     $scope.data.currentPageNo = 1;
                     empService.deleteAll();
                 },
-                showEditForm: function (department) {
-                    employeeFormService.setEditStatus(department);
+                showEditForm: function (employee) {
+                    employeeFormService.setEditStatus(employee);
                 },
                 showAddForm: function () {
                     employeeFormService.setAddStatus();
-                    tabService.setEmpFormAsActive();
                 },
                 deleteOne: function (employee) {
                     empService.deleteOne(employee);
@@ -65,9 +64,16 @@
     employeeControllers.controller('EmployeeFormController', ['$scope', 'empService', 'employeeFormService',
         function ($scope, empService, employeeFormService) {
 
-            $scope.$on('CHECK_EMP_FORM_MODEL', function () {
+            $scope.$on('SET_EMP_FORM_MODEL', function () {
                 $scope.currentEmp = employeeFormService.getFixedEmployee();
             });
+            $scope.$on('CLEAR_EMP_FORM_MODEL', function () {
+                Utils.clearModel($scope.currentEmp);
+            });
+            $scope.$on('EMP_BIRTH_SELECTED', function (event, stringDate) {
+                $scope.currentEmp.birth = stringDate;
+            });
+
 
             $scope.$watch('currentEmp.email', function (oldV, newV) {
                 empService.clearServerMessages();

@@ -160,23 +160,19 @@
 
     departmentServices.service('departmentFormService', ['$rootScope', 'tabService',
         function ($rootScope, tabService) {
-            var statuses = Constants.popupStatuses,
-                status = statuses.add,
-                fixedDepartment = {};
+            var fixedDepartment = {};
 
             return {
 
                 setAddStatus: function () {
-                    status = statuses.add;
                     Utils.clearModel(fixedDepartment);
-                    //$rootScope.$broadcast('CHECK_DEP_FORM_MODEL');
+                    $rootScope.$broadcast('CLEAR_DEP_FORM_MODEL');
                     tabService.setDepFormAsActive();
                     tabService.setAddPopupStatus();
                 },
                 setEditStatus: function (department) {
                     fixedDepartment = angular.copy(department);
-                    status = statuses.edit;
-                    $rootScope.$broadcast('CLEAR_DEP_FORM_MODEL');
+                    $rootScope.$broadcast('SET_DEP_FORM_MODEL');
                     tabService.setDepFormAsActive();
                     tabService.setEditPopupStatus();
                 },

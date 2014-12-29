@@ -47,6 +47,7 @@ var Utils = {
 
 };
 
+
 var Constants = {
 
     tabs: {depList: 'dep-list', depForm: 'dep-form', empList: 'emp-list', empForm: 'emp-form'},
@@ -65,6 +66,7 @@ var Constants = {
     }
 
 };
+
 
 var Messages = {
     depDeleted: function (department) {
@@ -85,11 +87,16 @@ var Messages = {
 
 var documentModifier = {
 
-    appendDatePicker: function () {
+    appendDatePicker: function (rootScope, eventName) {
         var dateInputs = jQuery('.datePicker');
+        var options = {
+            onSelect: function (dateText, inst) {
+                rootScope.$broadcast(eventName, dateText);
+            }
+        };
         console.log('found ' + dateInputs.length + ' datePickers');
         jQuery.each(dateInputs, function (index, value) {
-            jQuery(value).datepicker();
+            jQuery(value).datepicker(options);
         });
     }
 

@@ -173,34 +173,62 @@
 
     ]);
 
+    //
+    //employeeServices.service('employeeFormService', ['$rootScope', 'tabService',
+    //    function ($rootScope, tabService) {
+    //        var statuses = {add: 'ADD', edit: 'EDIT'},
+    //            status = statuses.add,
+    //            fixedEmployee = {};
+    //
+    //        return {
+    //            isEditStatus: function () {
+    //                return status == statuses.edit;
+    //            },
+    //            isAddStatus: function () {
+    //                return status == statuses.add;
+    //            },
+    //            setAddStatus: function () {
+    //                status = statuses.add;
+    //                Utils.clearModel(fixedEmployee);
+    //                //$rootScope.$broadcast('CHECK_EMP_FORM_MODEL');
+    //                tabService.setEmpFormAsActive();
+    //            },
+    //            setEditStatus: function (employee) {
+    //                fixedEmployee = angular.copy(employee);
+    //                status = statuses.edit;
+    //                //$rootScope.$broadcast('CHECK_EMP_FORM_MODEL');
+    //                tabService.setEmpFormAsActive();
+    //            },
+    //            getFixedEmployee: function () {
+    //                return angular.copy(fixedEmployee);
+    //            }
+    //        };
+    //    }
+    //]);
 
     employeeServices.service('employeeFormService', ['$rootScope', 'tabService',
         function ($rootScope, tabService) {
-            var statuses = {add: 'ADD', edit: 'EDIT'},
-                status = statuses.add,
-                fixedEmployee = {};
+            var fixedEmployee = {};
 
             return {
-                isEditStatus: function () {
-                    return status == statuses.edit;
-                },
-                isAddStatus: function () {
-                    return status == statuses.add;
-                },
+
                 setAddStatus: function () {
-                    status = statuses.add;
                     Utils.clearModel(fixedEmployee);
-                    $rootScope.$broadcast('CHECK_EMP_FORM_MODEL');
+                    $rootScope.$broadcast('CLEAR_DEP_FORM_MODEL');
+                    tabService.setEmpFormAsActive();
+                    tabService.setAddPopupStatus();
                 },
                 setEditStatus: function (employee) {
                     fixedEmployee = angular.copy(employee);
-                    status = statuses.edit;
-                    $rootScope.$broadcast('CHECK_EMP_FORM_MODEL');
-                    tabService.setDepFormAsActive();
+                    $rootScope.$broadcast('SET_EMP_FORM_MODEL');
+                    tabService.setEmpFormAsActive();
+                    tabService.setEditPopupStatus();
                 },
                 getFixedEmployee: function () {
                     return angular.copy(fixedEmployee);
-                }
+                },
+                isEditStatus: tabService.isEditPopupStatus,
+                isAddStatus: tabService.isAddPopupStatus
             };
         }
     ]);
