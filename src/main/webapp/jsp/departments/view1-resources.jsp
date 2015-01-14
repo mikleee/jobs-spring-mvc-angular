@@ -8,6 +8,7 @@
 <script type="text/javascript" src="<c:url value ="/js/models.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/init.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/main.js"/>"></script>
+<script type="text/javascript" src="<c:url value ="/js/angular/departments-app/listeners.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/directives.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/controllers/employeeControllers.js"/>"></script>
 <script type="text/javascript" src="<c:url value ="/js/angular/departments-app/controllers/departmentControllers.js"/>"></script>

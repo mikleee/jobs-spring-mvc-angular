@@ -125,7 +125,8 @@
             setEmpFormAsActive: function () {
                 activePopup = tabs.empForm;
                 hideEmpForm = false;
-                documentModifier.appendDatePicker($rootScope, 'EMP_BIRTH_SELECTED');
+                DocumentModifier.appendDatePicker($rootScope, 'EMP_BIRTH_SELECTED');
+                $rootScope.$broadcast(Constants.events.containerShouldBeResized);
             },
 
             hidePopup: function () {
@@ -164,6 +165,7 @@
                 if (activeTab == tabs.empForm) {
                     activeTab = tabs.depList;
                 }
+                DocumentModifier.unfitContainer('contentContainer');
             }
 
         };
@@ -188,7 +190,7 @@
                 if (validationRule) {
                     regexp = new RegExp(validationRule.pattern);
 
-                    if (!fieldValue.match(regexp)) {
+                    if (!fieldValue.toString().match(regexp)) {
                         result.message = validationRules[fieldName].message;
                         result.isValid = false;
                     }

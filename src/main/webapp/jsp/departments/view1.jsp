@@ -22,7 +22,7 @@
             <tabs-panel></tabs-panel>
         </div>
 
-        <div class="relative col-85">
+        <div id="contentContainer" class="relative col-85">
 
             <div class="separated-y">
                 <department-list ng-show="conditions.isDepList()"></department-list>
@@ -30,7 +30,7 @@
             </div>
 
             <div class="separated-y popup" ng-show="conditions.isPopup()">
-                <div class="popup-content">
+                <div id="popupContainer" class="popup-content">
                     <div class="popup-header">
                         <div class="col-95">{{popupTitle('Add','Edit','department','employee')}}</div>
                         <div class="col-05">

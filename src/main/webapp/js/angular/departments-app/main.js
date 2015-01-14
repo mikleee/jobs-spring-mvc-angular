@@ -1,6 +1,6 @@
 (function () {
 
-    var departments = angular.module('departments', ['directives', 'departmentServices', 'employeeServices', 'employeeControllers','departmentControllers']);
+    var departments = angular.module('departments', ['directives', 'departmentServices', 'employeeServices', 'employeeControllers', 'departmentControllers']);
 
     departments.controller('MainController', ['$scope', 'tabService',
         function ($scope, tabService) {

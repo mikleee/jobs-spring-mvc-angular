@@ -27,6 +27,7 @@
                 },
                 showEditForm: function (employee) {
                     employeeFormService.setEditStatus(employee);
+                    DocumentModifier.fitContainer('contentContainer', 'popupContainer');
                 },
                 showAddForm: function () {
                     employeeFormService.setAddStatus();
@@ -64,20 +65,8 @@
     employeeControllers.controller('EmployeeFormController', ['$scope', 'empService', 'employeeFormService',
         function ($scope, empService, employeeFormService) {
 
-            $scope.$on('SET_EMP_FORM_MODEL', function () {
-                $scope.currentEmp = employeeFormService.getFixedEmployee();
-            });
-            $scope.$on('CLEAR_EMP_FORM_MODEL', function () {
-                Utils.clearModel($scope.currentEmp);
-            });
-            $scope.$on('EMP_BIRTH_SELECTED', function (event, stringDate) {
-                $scope.currentEmp.birth = Utils.parseDate(stringDate);
-            });
-
-
-            $scope.$watch('currentEmp.email', function (oldV, newV) {
-                empService.clearServerMessages();
-            });
+            listeners.registerEmpFormControllerListeners($scope, empService, employeeFormService);
+            watchers.registerEmpFormControllerWatchers($scope, empService, employeeFormService);
 
             $scope.currentEmp = Utils.createEmptyModel(['name', 'salary', 'email', 'birth']);
 

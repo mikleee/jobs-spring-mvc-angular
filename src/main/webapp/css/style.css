@@ -1,10 +1,7 @@
 .text-section-default {
     margin-left: auto;
     margin-right: auto;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    padding-right: 7px;
-    padding-left: 7px;
+    padding: 3px 7px;
     color: rgba(0, 0, 0, 0.81);
 }
 
@@ -33,7 +30,6 @@ td, th {
 
 .developer-info-area {
     font-size: 12px;
-    text-align: justify;
     border: 1px solid rgba(137, 225, 244, 0.5);
     padding: 4px;
     border-radius: 5px;

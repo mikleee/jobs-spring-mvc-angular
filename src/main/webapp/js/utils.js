@@ -65,10 +65,14 @@ var Constants = {
             name: {pattern: '^[a-zA-Z]{3,20}$', message: 'the name should be alpha [3 - 20]'},
             location: {pattern: '^[a-zA-Z]{0,20}$', message: 'the location should be alpha [0 - 20]'}
         },
-        employee: {}
+        employee: {
+            name: {pattern: '^[a-zA-Z]{3,20}$', message: 'the name should be alpha [3 - 20]'},
+            salary: {pattern: '^[\\d]{1,10}$', message: 'the name should be numeric'}
+        }
     },
     events: {
-        depDeleted: 'DEPARTMENT_WAS_DELETED'
+        depDeleted: 'DEPARTMENT_WAS_DELETED',
+        containerShouldBeResized: 'CONTAINER_SHOULD_BE_RESIZED'
     }
 
 };
@@ -85,13 +89,18 @@ var Messages = {
     depPersistingFailed: function (department, serverMessages) {
         return angular.toJson(department) + ' persisting failed, reason: ' + angular.toJson(serverMessages);
     },
-    empDeleted: function (department) {
-        return angular.toJson(department) + ' employee was deleted.'
+    empDeleted: function (employee) {
+        return angular.toJson(employee) + ' employee was deleted.'
     }
 };
 
 
-var documentModifier = {
+var DocumentModifier = {
+
+    getElementHeightValue: function (elem) {
+        var stringResult = $(elem).css('height').split('px')[0];
+        return parseFloat(stringResult);
+    },
 
     appendDatePicker: function (rootScope, eventName) {
         var dateInputs = jQuery('.datePicker');
@@ -105,6 +114,27 @@ var documentModifier = {
         jQuery.each(dateInputs, function (index, value) {
             jQuery(value).datepicker(options);
         });
+    },
+
+    fitContainer: function (parentContainerId, contentContainerId) {
+        var parentContainer = $('#' + parentContainerId),
+            parentContainerHeight = this.getElementHeightValue(parentContainer),
+            contentHeight = this.getElementHeightValue('#' + contentContainerId);
+
+        while (contentHeight == 0) {
+            contentHeight = this.getElementHeightValue('#' + contentContainerId);
+            console.log(parentContainerHeight + '         ' + contentHeight);
+            if (parentContainerHeight < contentHeight) {
+                $(parentContainer).innerHeight(contentHeight);
+            }
+        }
+
+
+    },
+
+    unfitContainer: function (parentContainerId) {
+        $('#' + parentContainerId).removeAttr('style');
     }
+
 
 };

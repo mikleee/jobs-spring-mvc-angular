@@ -58,15 +58,7 @@
                 },
                 doAfterDeleteOneLogic: function (response, employee) {
                     handleSuccessCallback(response, Messages.empDeleted(employee));
-                    if (Utils.isAbsent(employeeFormService.getFixedEmployee())) {
-                        employeeFormService.setAddStatus();
-                    }
                     currentPageNo = pagingService.defineCurrentPageNo(pagedEmpList, currentPageNo);
-                },
-                doAfterDeleteAllLogic: function () {
-                    handleSuccessCallback({data: []}, Messages.empListCleared());
-                    employeeFormService.setAddStatus();
-                    currentPageNo = 1;
                 }
             };
 
@@ -173,38 +165,6 @@
 
     ]);
 
-    //
-    //employeeServices.service('employeeFormService', ['$rootScope', 'tabService',
-    //    function ($rootScope, tabService) {
-    //        var statuses = {add: 'ADD', edit: 'EDIT'},
-    //            status = statuses.add,
-    //            fixedEmployee = {};
-    //
-    //        return {
-    //            isEditStatus: function () {
-    //                return status == statuses.edit;
-    //            },
-    //            isAddStatus: function () {
-    //                return status == statuses.add;
-    //            },
-    //            setAddStatus: function () {
-    //                status = statuses.add;
-    //                Utils.clearModel(fixedEmployee);
-    //                //$rootScope.$broadcast('CHECK_EMP_FORM_MODEL');
-    //                tabService.setEmpFormAsActive();
-    //            },
-    //            setEditStatus: function (employee) {
-    //                fixedEmployee = angular.copy(employee);
-    //                status = statuses.edit;
-    //                //$rootScope.$broadcast('CHECK_EMP_FORM_MODEL');
-    //                tabService.setEmpFormAsActive();
-    //            },
-    //            getFixedEmployee: function () {
-    //                return angular.copy(fixedEmployee);
-    //            }
-    //        };
-    //    }
-    //]);
 
     employeeServices.service('employeeFormService', ['$rootScope', 'tabService',
         function ($rootScope, tabService) {
