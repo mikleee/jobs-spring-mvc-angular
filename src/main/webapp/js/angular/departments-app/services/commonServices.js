@@ -81,7 +81,7 @@
         }]);
 
 
-    commonServices.service('tabService', ['$rootScope', function ($rootScope) {
+    commonServices.service('tabService', ['$rootScope', '$q', function ($rootScope, $q) {
         var tabs = Constants.tabs,
             popupStatuses = Constants.popupStatuses,
             activeTab = tabs.depList,
@@ -126,7 +126,7 @@
                 activePopup = tabs.empForm;
                 hideEmpForm = false;
                 DocumentModifier.appendDatePicker($rootScope, 'EMP_BIRTH_SELECTED');
-                $rootScope.$broadcast(Constants.events.containerShouldBeResized);
+                DocumentModifier.fitContainerAsync($q, 'contentContainer', 'popupContent');
             },
 
             hidePopup: function () {

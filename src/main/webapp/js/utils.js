@@ -71,8 +71,7 @@ var Constants = {
         }
     },
     events: {
-        depDeleted: 'DEPARTMENT_WAS_DELETED',
-        containerShouldBeResized: 'CONTAINER_SHOULD_BE_RESIZED'
+        depDeleted: 'DEPARTMENT_WAS_DELETED'
     }
 
 };
@@ -94,13 +93,20 @@ var Messages = {
     }
 };
 
+var Converter = {
 
-var DocumentModifier = {
-
-    getElementHeightValue: function (elem) {
-        var stringResult = $(elem).css('height').split('px')[0];
+    fromAtrToValue: function (elem, styleAttr) {
+        var stringResult = $(elem).css(styleAttr).split('px')[0];
         return parseFloat(stringResult);
     },
+
+    fromValueToAttr: function (value) {
+        return value + 'px';
+    }
+
+};
+
+var DocumentModifier = {
 
     appendDatePicker: function (rootScope, eventName) {
         var dateInputs = jQuery('.datePicker');
@@ -116,25 +122,74 @@ var DocumentModifier = {
         });
     },
 
-    fitContainer: function (parentContainerId, contentContainerId) {
-        var parentContainer = $('#' + parentContainerId),
-            parentContainerHeight = this.getElementHeightValue(parentContainer),
-            contentHeight = this.getElementHeightValue('#' + contentContainerId);
+    fitContainer: function (parentContainer, contentContainer) {
+        var contentContainerWrapped = $(contentContainer),
+            parentContainerHeight = Converter.fromAtrToValue(parentContainer, 'height'),
+            contentHeight = Converter.fromAtrToValue(contentContainerWrapped, 'height');
 
-        while (contentHeight == 0) {
-            contentHeight = this.getElementHeightValue('#' + contentContainerId);
-            console.log(parentContainerHeight + '         ' + contentHeight);
-            if (parentContainerHeight < contentHeight) {
-                $(parentContainer).innerHeight(contentHeight);
-            }
+        if (parentContainerHeight < contentHeight) {
+            $(parentContainer).css('height', Converter.fromValueToAttr(contentHeight));
         }
-
 
     },
 
     unfitContainer: function (parentContainerId) {
         $('#' + parentContainerId).removeAttr('style');
+    },
+
+    fitContainerAsync: function ($q, containerId, contentId) {
+        var context = this;
+
+        var
+            container = $('#' + containerId),
+            content = $('#' + contentId);
+
+        var
+            resolveCondition = function () {
+                return !$(content).parent().hasClass('ng-hide');
+            },
+            resolver = function () {
+                return Converter.fromAtrToValue($(content), 'height');
+            },
+            handler = function (resolvedValue) {
+                context.fitContainer(container, content)
+            };
+
+        AsyncUtils.runAsync($q, resolveCondition, resolver, handler);
     }
 
+};
+
+var AsyncUtils = {
+
+    startFunctionAsync: function (fn) {
+        window.setTimeout(fn, 0);
+    },
+
+    runAsync: function ($q, resolveCondition, resolver, handler) {
+        var promise = $q(function (resolve, reject) {
+
+            this.startFunctionAsync(function () {
+                while (true) {
+                    var ok = resolveCondition();
+                    if (ok) {
+                        var result = resolver();
+                        resolve(result);
+                        break;
+                    }
+                }
+            });
+
+        });
+
+        promise.then(
+            handler,
+            function (resolvedValue) {
+                console.log('rejected')
+            }, function (resolvedValue) {
+                console.log('notified')
+            }
+        );
+    }
 
 };

@@ -27,7 +27,6 @@
                 },
                 showEditForm: function (employee) {
                     employeeFormService.setEditStatus(employee);
-                    DocumentModifier.fitContainer('contentContainer', 'popupContainer');
                 },
                 showAddForm: function () {
                     employeeFormService.setAddStatus();
